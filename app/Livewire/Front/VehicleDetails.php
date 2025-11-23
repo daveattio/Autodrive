@@ -7,6 +7,7 @@ use App\Models\Vehicle;
 use App\Models\Booking;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
 
 class VehicleDetails extends Component
 {
@@ -68,6 +69,7 @@ class VehicleDetails extends Component
         return redirect()->route('dashboard'); // Ou une page "Mes réservations"
     }
 
+     #[Layout('layouts.front')] 
     public function render()
     {
         return view('livewire.front.vehicle-details');

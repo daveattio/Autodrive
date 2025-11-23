@@ -3,54 +3,116 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
-use App\Models\Vehicle; // On importe le modèle Vehicle
-use Livewire\WithFileUploads; // Nécessaire pour uploader des images
+use App\Models\Vehicle;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
 
 class VehicleManager extends Component
 {
     use WithFileUploads;
 
-    // Ici, on définit les variables qui seront liées au formulaire
+    public $vehicles;
+    // Variables du formulaire
     public $name, $brand, $type, $daily_price, $transmission, $description, $image;
 
-    // Cette fonction s'exécute quand on clique sur "Enregistrer"
+    // Pour gérer le mode "Modification"
+    public $vehicleIdToEdit = null;
+    public $isEditMode = false;
+
+    // Cette fonction remplace render() pour récupérer les véhicules
+    public function mount()
+    {
+        $this->vehicles = Vehicle::all();
+    }
+
+    // Mettre à jour la liste après chaque action
+    public function refreshVehicles()
+    {
+        $this->vehicles = Vehicle::all();
+    }
+
+    // 1. SUPPRIMER UN VÉHICULE
+    public function deleteVehicle($id)
+    {
+        $vehicle = Vehicle::find($id);
+        if ($vehicle) {
+            $vehicle->delete();
+            $this->refreshVehicles();
+            session()->flash('message', 'Véhicule supprimé avec succès.');
+        }
+    }
+
+    // 2. CHARGER LES INFOS POUR MODIFIER
+    public function editVehicle($id)
+    {
+        $vehicle = Vehicle::find($id);
+        if ($vehicle) {
+            $this->vehicleIdToEdit = $vehicle->id;
+            $this->name = $vehicle->name;
+            $this->brand = $vehicle->brand;
+            $this->type = $vehicle->type;
+            $this->daily_price = $vehicle->daily_price;
+            $this->transmission = $vehicle->transmission;
+            $this->description = $vehicle->description;
+            $this->isEditMode = true;
+        }
+    }
+
+    // 3. SAUVEGARDER (Soit Création, Soit Modification)
     public function saveVehicle()
     {
-        // 1. On valide que les champs sont bien remplis
         $this->validate([
             'name' => 'required',
             'brand' => 'required',
             'daily_price' => 'required|numeric',
-            'image' => 'image|max:1024', // Max 1MB
         ]);
 
-        // 2. On gère l'image si elle existe
-        $imagePath = null;
-        if ($this->image) {
-            $imagePath = $this->image->store('vehicles', 'public');
+        if ($this->isEditMode) {
+            // MODE MODIFICATION
+            $vehicle = Vehicle::find($this->vehicleIdToEdit);
+
+            $data = [
+                'name' => $this->name,
+                'brand' => $this->brand,
+                'type' => $this->type,
+                'transmission' => $this->transmission,
+                'daily_price' => $this->daily_price,
+                'description' => $this->description,
+            ];
+
+            if ($this->image) {
+                $data['image'] = $this->image->store('vehicles', 'public');
+            }
+
+            $vehicle->update($data);
+            session()->flash('message', 'Véhicule modifié !');
+        } else {
+            // MODE CRÉATION
+            $imagePath = $this->image ? $this->image->store('vehicles', 'public') : null;
+
+            Vehicle::create([
+                'name' => $this->name,
+                'brand' => $this->brand,
+                'type' => $this->type ?? 'Economique',
+                'transmission' => $this->transmission ?? 'Manuelle',
+                'daily_price' => $this->daily_price,
+                'description' => $this->description,
+                'image' => $imagePath,
+            ]);
+            session()->flash('message', 'Véhicule créé !');
         }
 
-        // 3. On crée la voiture dans la base de données
-        Vehicle::create([
-            'name' => $this->name,
-            'brand' => $this->brand,
-            'type' => $this->type ?? 'Economique', // Valeur par défaut si vide
-            'transmission' => $this->transmission ?? 'Manuelle',
-            'daily_price' => $this->daily_price,
-            'description' => $this->description,
-            'image' => $imagePath,
-        ]);
+        $this->reset(['name', 'brand', 'type', 'daily_price', 'transmission', 'description', 'image', 'vehicleIdToEdit', 'isEditMode']);
+        $this->refreshVehicles();
+    }
 
-        // 4. Petit message de succès et on vide le formulaire
-        session()->flash('message', 'Voiture ajoutée avec succès !');
-        $this->reset();
+    public function cancelEdit()
+    {
+        $this->reset(['name', 'brand', 'type', 'daily_price', 'transmission', 'description', 'image', 'vehicleIdToEdit', 'isEditMode']);
     }
 
     public function render()
     {
-        // On retourne la vue, et on lui envoie la liste des voitures existantes (pour les voir en bas du formulaire)
-        return view('livewire.admin.vehicle-manager', [
-            'vehicles' => Vehicle::all()
-        ]);
+        return view('livewire.admin.vehicle-manager');
     }
 }

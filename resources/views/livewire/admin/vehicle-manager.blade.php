@@ -3,9 +3,9 @@
 
     <!-- Message de succès -->
     @if (session()->has('message'))
-        <div class="bg-green-100 text-green-800 p-2 mb-4 rounded">
-            {{ session('message') }}
-        </div>
+    <div class="bg-green-100 text-green-800 p-2 mb-4 rounded">
+        {{ session('message') }}
+    </div>
     @endif
 
     <form wire:submit.prevent="saveVehicle">
@@ -38,17 +38,41 @@
             </div>
         </div>
 
-        <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
-            Enregistrer le véhicule
-        </button>
+        <div class="flex gap-2 mt-4">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
+                {{ $isEditMode ? 'Mettre à jour' : 'Ajouter le véhicule' }}
+            </button>
+
+            @if($isEditMode)
+            <button type="button" wire:click="cancelEdit" class="bg-gray-500 text-white px-4 py-2 rounded">
+                Annuler
+            </button>
+            @endif
+        </div>
     </form>
 
     <hr class="my-8">
 
     <h3 class="text-lg font-bold">Véhicules en base de données :</h3>
     <ul>
-        @foreach($vehicles as $vehicle)
-            <li class="border-b py-2">{{ $vehicle->brand }} {{ $vehicle->name }} - {{ $vehicle->daily_price }} FCFA</li>
-        @endforeach
+        <table class="w-full mt-8 border">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="p-2">Véhicule</th>
+                    <th class="p-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($vehicles as $vehicle)
+                <tr class="border-t">
+                    <td class="p-2">{{ $vehicle->brand }} - {{ $vehicle->name }} ({{ $vehicle->daily_price }} FCFA)</td>
+                    <td class="p-2 flex gap-2 justify-center">
+                        <button wire:click="editVehicle({{ $vehicle->id }})" class="bg-yellow-500 text-white px-2 py-1 rounded text-sm">Modifier</button>
+                        <button wire:click="deleteVehicle({{ $vehicle->id }})" wire:confirm="Sûr de vouloir supprimer ?" class="bg-red-500 text-white px-2 py-1 rounded text-sm">Supprimer</button>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </ul>
 </div>
