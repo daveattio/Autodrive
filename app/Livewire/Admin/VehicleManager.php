@@ -5,44 +5,42 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\Vehicle;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Storage;
 
 class VehicleManager extends Component
 {
     use WithFileUploads;
 
     public $vehicles;
-    // Variables du formulaire
+
+    // Tous les champs nécessaires
     public $name, $brand, $type, $daily_price, $transmission, $description, $image;
 
-    // Pour gérer le mode "Modification"
+    // Pour gérer l'édition
     public $vehicleIdToEdit = null;
     public $isEditMode = false;
+    public $oldImage = null; // Pour afficher l'image existante en modif
 
-    // Cette fonction remplace render() pour récupérer les véhicules
     public function mount()
     {
-        $this->vehicles = Vehicle::all();
+        $this->refreshVehicles();
     }
 
-    // Mettre à jour la liste après chaque action
     public function refreshVehicles()
     {
-        $this->vehicles = Vehicle::all();
+        $this->vehicles = Vehicle::latest()->get();
     }
 
-    // 1. SUPPRIMER UN VÉHICULE
-    public function deleteVehicle($id)
-    {
-        $vehicle = Vehicle::find($id);
-        if ($vehicle) {
-            $vehicle->delete();
-            $this->refreshVehicles();
-            session()->flash('message', 'Véhicule supprimé avec succès.');
-        }
-    }
+    // Validation des données
+    protected $rules = [
+        'brand' => 'required|min:2',
+        'name' => 'required',
+        'type' => 'required', // On oblige l'admin à choisir
+        'transmission' => 'required', // On oblige l'admin à choisir
+        'daily_price' => 'required|numeric|min:1000',
+        'description' => 'required|min:10', // Description obligatoire
+        'image' => 'nullable|image|max:2048', // 2MB Max
+    ];
 
-    // 2. CHARGER LES INFOS POUR MODIFIER
     public function editVehicle($id)
     {
         $vehicle = Vehicle::find($id);
@@ -54,18 +52,14 @@ class VehicleManager extends Component
             $this->daily_price = $vehicle->daily_price;
             $this->transmission = $vehicle->transmission;
             $this->description = $vehicle->description;
+            $this->oldImage = $vehicle->image; // On garde l'ancienne image en mémoire
             $this->isEditMode = true;
         }
     }
 
-    // 3. SAUVEGARDER (Soit Création, Soit Modification)
     public function saveVehicle()
     {
-        $this->validate([
-            'name' => 'required',
-            'brand' => 'required',
-            'daily_price' => 'required|numeric',
-        ]);
+        $this->validate();
 
         if ($this->isEditMode) {
             // MODE MODIFICATION
@@ -80,35 +74,48 @@ class VehicleManager extends Component
                 'description' => $this->description,
             ];
 
+            // Si une nouvelle image est uploadée, on remplace l'ancienne
             if ($this->image) {
                 $data['image'] = $this->image->store('vehicles', 'public');
             }
 
             $vehicle->update($data);
-            session()->flash('message', 'Véhicule modifié !');
+            session()->flash('message', 'Véhicule modifié avec succès !');
         } else {
             // MODE CRÉATION
+            // Ici, plus de valeurs par défaut ! On prend ce qu'il y a dans le formulaire.
             $imagePath = $this->image ? $this->image->store('vehicles', 'public') : null;
 
             Vehicle::create([
                 'name' => $this->name,
                 'brand' => $this->brand,
-                'type' => $this->type ?? 'Economique',
-                'transmission' => $this->transmission ?? 'Manuelle',
+                'type' => $this->type,
+                'transmission' => $this->transmission,
                 'daily_price' => $this->daily_price,
                 'description' => $this->description,
                 'image' => $imagePath,
+                'is_available' => true
             ]);
-            session()->flash('message', 'Véhicule créé !');
+            session()->flash('message', 'Véhicule ajouté avec succès !');
         }
 
-        $this->reset(['name', 'brand', 'type', 'daily_price', 'transmission', 'description', 'image', 'vehicleIdToEdit', 'isEditMode']);
+        $this->cancelEdit(); // Réinitialiser le formulaire
         $this->refreshVehicles();
     }
 
     public function cancelEdit()
     {
-        $this->reset(['name', 'brand', 'type', 'daily_price', 'transmission', 'description', 'image', 'vehicleIdToEdit', 'isEditMode']);
+        $this->reset(['name', 'brand', 'type', 'daily_price', 'transmission', 'description', 'image', 'vehicleIdToEdit', 'isEditMode', 'oldImage']);
+    }
+
+    public function deleteVehicle($id)
+    {
+        $vehicle = Vehicle::find($id);
+        if ($vehicle) {
+            $vehicle->delete();
+            $this->refreshVehicles();
+            session()->flash('message', 'Véhicule supprimé.');
+        }
     }
 
     public function render()

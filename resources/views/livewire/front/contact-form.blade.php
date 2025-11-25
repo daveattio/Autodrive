@@ -1,40 +1,55 @@
-<div class="bg-white p-8 rounded-xl shadow-lg">
-    <h2 class="text-2xl font-bold mb-6 text-blue-600">Envoyez-nous un message</h2>
-
-    <!-- Message de succès -->
+<div>
+    <!-- Message de Succès (Apparaît après envoi) -->
     @if (session()->has('success'))
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded animate-pulse">
-            <p class="font-bold">Succès</p>
-            <p>{{ session('success') }}</p>
+        <div class="bg-green-50 text-green-700 p-4 rounded-lg mb-6 flex items-center gap-3 border border-green-200 animate-pulse">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{{ session('success') }}</span>
         </div>
     @endif
 
-    <form wire:submit.prevent="submitMessage">
+    <form wire:submit="submitMessage" class="space-y-5">
         <!-- Nom -->
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Nom complet</label>
-            <input wire:model="name" type="text" class="w-full border-gray-300 border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="Votre nom">
-            @error('name') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Nom complet</label>
+            <input type="text" wire:model="name"
+                   class="w-full px-4 py-3 rounded-lg bg-gray-50 border-transparent focus:border-blue-500 focus:bg-white focus:ring-0 transition duration-200"
+                   placeholder="Votre nom">
+            @error('name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
         </div>
 
         <!-- Email -->
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-            <input wire:model="email" type="email" class="w-full border-gray-300 border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="votre@email.com">
-            @error('email') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Email professionnel</label>
+            <input type="email" wire:model="email"
+                   class="w-full px-4 py-3 rounded-lg bg-gray-50 border-transparent focus:border-blue-500 focus:bg-white focus:ring-0 transition duration-200"
+                   placeholder="exemple@gmail.com">
+            @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
         </div>
 
         <!-- Message -->
-        <div class="mb-6">
-            <label class="block text-gray-700 text-sm font-bold mb-2">Message</label>
-            <textarea wire:model="message" class="w-full border-gray-300 border p-3 rounded-lg h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" placeholder="Comment pouvons-nous vous aider ?"></textarea>
-            @error('message') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1">Votre message</label>
+            <textarea wire:model="message" rows="4"
+                      class="w-full px-4 py-3 rounded-lg bg-gray-50 border-transparent focus:border-blue-500 focus:bg-white focus:ring-0 transition duration-200"
+                      placeholder="Dites-nous tout..."></textarea>
+            @error('message') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
         </div>
 
-        <!-- Bouton avec état de chargement -->
-        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md flex justify-center items-center">
+        <!-- Bouton d'envoi -->
+        <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-lg transition duration-200 transform hover:scale-[1.02] flex justify-center items-center shadow-lg">
+
             <span wire:loading.remove>Envoyer le message</span>
-            <span wire:loading>Envoi en cours...</span>
+
+            <span wire:loading class="flex items-center gap-2">
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Envoi...
+            </span>
         </button>
     </form>
 </div>
