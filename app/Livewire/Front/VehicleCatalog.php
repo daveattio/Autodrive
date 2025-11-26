@@ -15,7 +15,7 @@ class VehicleCatalog extends Component
     public $search = '';
     public $type = '';
     public $transmission = ''; // <--- NOUVEAU
-    public $maxPrice = 200000; // Augmenté un peu par défaut
+    public $maxPrice = 300000; // Augmenté un peu par défaut
 
     // Remet à la page 1 quand on change un filtre
     public function updatedSearch() { $this->resetPage(); }

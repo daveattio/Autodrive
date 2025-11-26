@@ -112,8 +112,8 @@
                     <td class="p-3">{{ $vehicle->type }}</td>
                     <td class="p-3 font-bold text-blue-600">{{ number_format($vehicle->daily_price, 0, ',', ' ') }} FCFA</td>
                     <td class="p-3 text-center flex justify-center gap-2">
-                         <button wire:click="editVehicle({{ $vehicle->id }})" class="text-blue-600 hover:underline">Modifier</button>
-                         <button wire:click="deleteVehicle({{ $vehicle->id }})" wire:confirm="Supprimer ?" class="text-red-600 hover:underline">Supprimer</button>
+                         <button wire:click="editVehicle({{ $vehicle->id }})" class="mr-2 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 text-sm font-bold shadow-md transition transform hover:scale-105">Modifier</button>
+                         <button wire:click="deleteVehicle({{ $vehicle->id }})" wire:confirm="Supprimer ?" class="mr-2 bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 text-sm font-bold shadow-md transition transform hover:scale-105">Supprimer</button>
                     </td>
                 </tr>
             @endforeach
