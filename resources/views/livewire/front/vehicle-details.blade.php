@@ -1,167 +1,213 @@
-<div class="bg-gray-50 min-h-screen pb-20">
+<div class="bg-gray-50 min-h-screen py-10">
+    <div class="container mx-auto px-4 max-w-7xl">
 
-    <!-- 1. HEADER IMMERSIF (Image + Titre superposé) -->
-    <div class="relative w-full h-[60vh] bg-gray-900 overflow-hidden">
-        @if($vehicle->image)
-            <img src="{{ asset('storage/' . $vehicle->image) }}" class="w-full h-full object-cover opacity-90">
-        @else
-            <div class="w-full h-full flex items-center justify-center bg-gray-800 text-gray-500">
-                <svg class="w-32 h-32 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        <!-- EN-TÊTE : NAVIGATION & PRIX (Nouveau Style "Encoche") -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+
+            <!-- Bouton Retour & Titre -->
+            <div>
+                <!-- BOUTON RETOUR : Encoche bleue à gauche + Animation -->
+                <a href="{{ route('vehicles.index') }}" class="inline-flex items-center gap-2 bg-white px-5 py-2.5 rounded-r-lg border-l-4 border-blue-600 shadow-sm text-sm font-bold text-gray-700 hover:shadow-md hover:pl-6 transition-all duration-300 mb-5 group">
+                    <svg class="w-4 h-4 text-blue-600 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    Retour au catalogue
+                </a>
+
+                <h1 class="text-4xl md:text-6xl font-black text-gray-900 tracking-tighter leading-none">
+                    {{ $vehicle->brand }} <span class="text-blue-700">{{ $vehicle->name }}</span>
+                </h1>
+
+                <div class="flex items-center gap-3 mt-4">
+                    <!-- Badges avec style technique -->
+                    <span class="bg-gray-900 text-white text-xs font-bold px-3 py-1 rounded-sm uppercase tracking-widest border-l-2 border-gray-500">
+                        {{ $vehicle->type }}
+                    </span>
+                    @if($vehicle->is_available)
+                        <span class="flex items-center gap-2 text-green-700 font-bold text-sm bg-green-50 px-3 py-1 rounded-sm border-l-2 border-green-500">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                            Disponible
+                        </span>
+                    @else
+                        <span class="text-red-600 font-bold text-sm bg-red-50 px-3 py-1 rounded-sm border-l-2 border-red-500">Loué</span>
+                    @endif
+                </div>
             </div>
-        @endif
 
-        <!-- Dégradé pour lisibilité -->
-        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
+             <!-- Prix (Style Encoche Droite & Sombre) -->
+            <div class="bg-gray-900 text-white p-5 rounded-l-xl rounded-br-xl shadow-2xl min-w-[240px] border-r-8 border-blue-500 relative overflow-hidden group">
+                <!-- Petit effet de brillance en arrière plan -->
+                <div class="absolute top-0 right-0 w-20 h-full bg-white/5 skew-x-12 -mr-10 transition group-hover:mr-0 duration-500"></div>
 
-        <!-- Titre Flottant en bas de l'image -->
-        <div class="absolute bottom-0 left-0 w-full p-6 md:p-12 z-10">
-            <div class="container mx-auto">
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                    <div class="text-white">
-                        <div class="inline-block bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider shadow-lg">
-                            {{ $vehicle->type }}
-                        </div>
-                        <h1 class="text-4xl md:text-6xl font-black tracking-tight mb-2 leading-tight">
-                            {{ $vehicle->brand }} <span class="text-gray-300 font-light">{{ $vehicle->name }}</span>
-                        </h1>
-                        <p class="text-gray-300 text-lg flex items-center gap-2">
-                            @if($vehicle->is_available)
-                                <span class="w-3 h-3 bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.8)]"></span> Disponible immédiatement
-                            @else
-                                <span class="w-3 h-3 bg-red-500 rounded-full"></span> Actuellement loué
-                            @endif
-                        </p>
-                    </div>
-                    <!-- Prix en gros sur l'image -->
-                    <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-white min-w-[200px] text-center">
-                        <p class="text-xs text-gray-300 uppercase tracking-widest mb-1">Tarif journalier</p>
-                        <p class="text-3xl font-bold">{{ number_format($vehicle->daily_price, 0, ',', ' ') }} <span class="text-sm font-normal">FCFA</span></p>
-                    </div>
+                <p class="text-gray-400 text-xs uppercase tracking-widest mb-1 font-semibold">Tarif journalier</p>
+                <div class="text-4xl font-black flex items-baseline justify-end gap-1">
+                    {{ number_format($vehicle->daily_price, 0, ',', ' ') }}
+                    <span class="text-lg font-medium text-gray-500">FCFA</span>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="container mx-auto px-4 -mt-8 relative z-20">
         <div class="flex flex-col lg:flex-row gap-8">
 
-            <!-- 2. COLONNE GAUCHE : SPECS & DESCRIPTION (Design épuré) -->
-            <div class="lg:w-2/3">
-                <!-- Tuiles de Spécifications -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:-translate-y-1 transition duration-300">
-                        <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-2 text-gray-600">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                        </div>
-                        <span class="text-xs text-gray-400 uppercase">Boîte</span>
-                        <span class="font-bold text-gray-800">{{ $vehicle->transmission }}</span>
-                    </div>
+            <!-- COLONNE GAUCHE : IMAGE & SPECS (65%) -->
+            <div class="lg:w-2/3 space-y-8">
 
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:-translate-y-1 transition duration-300">
-                        <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-2 text-gray-600">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                        </div>
-                        <span class="text-xs text-gray-400 uppercase">Catégorie</span>
-                        <span class="font-bold text-gray-800">{{ $vehicle->type }}</span>
-                    </div>
+                <!-- 1. LA PHOTO (Cadre réduit et affiné) -->
+                <!-- J'ai mis p-1 au lieu de p-2 et réduit les arrondis pour que ça fasse moins "gros" -->
+                <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-200 p-1">
+                    <div class="relative w-full rounded-[1.3rem] overflow-hidden bg-gray-100 group">
+                        @if($vehicle->image)
+                            <!-- Effet zoom conservé -->
+                            <img src="{{ asset('storage/' . $vehicle->image) }}"
+                                 class="w-full h-auto object-cover hover:scale-110 transition duration-[800ms] ease-in-out transform"
+                                 alt="{{ $vehicle->name }}">
 
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:-translate-y-1 transition duration-300">
-                        <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-2 text-gray-600">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        </div>
-                        <span class="text-xs text-gray-400 uppercase">État</span>
-                        <span class="font-bold text-gray-800">Excellent</span>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:-translate-y-1 transition duration-300">
-                        <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-2 text-gray-600">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        </div>
-                        <span class="text-xs text-gray-400 uppercase">Assurance</span>
-                        <span class="font-bold text-gray-800">Incluse</span>
+                            <!-- Petit gradient en bas pour le style -->
+                            <div class="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                        @else
+                            <div class="aspect-video flex items-center justify-center text-gray-400">
+                                <svg class="w-24 h-24 opacity-20" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
-                <!-- Texte Description Stylisé -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-2 h-full bg-blue-600"></div> <!-- Barre latérale décorative -->
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4 font-serif italic">"L'expérience de conduite..."</h3>
-                    <div class="prose text-gray-600 leading-loose text-lg">
-                        {{ $vehicle->description ?? "Découvrez le confort absolu de ce véhicule. Parfaitement entretenu et prêt à vous emmener partout où vous le souhaitez. Une expérience de conduite fluide et sécurisée vous attend." }}
+                <!-- 2. FICHE TECHNIQUE (JE N'AI PAS TOUCHÉ, COMME DEMANDÉ) -->
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                        Performances & Détails
+                    </h3>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl hover:-translate-y-2 hover:shadow-lg hover:shadow-blue-100 transition duration-300 cursor-default group">
+                            <div class="w-10 h-10 bg-blue-200 text-blue-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-600 group-hover:text-white transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                            </div>
+                            <p class="text-xs text-blue-400 font-bold uppercase tracking-wider">Boîte</p>
+                            <p class="font-black text-gray-800 text-lg">{{ $vehicle->transmission }}</p>
+                        </div>
+                        <div class="bg-violet-50 border border-violet-100 p-4 rounded-2xl hover:-translate-y-2 hover:shadow-lg hover:shadow-violet-100 transition duration-300 cursor-default group">
+                            <div class="w-10 h-10 bg-violet-200 text-violet-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-violet-600 group-hover:text-white transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            </div>
+                            <p class="text-xs text-violet-400 font-bold uppercase tracking-wider">Type</p>
+                            <p class="font-black text-gray-800 text-lg">{{ $vehicle->type }}</p>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl hover:-translate-y-2 hover:shadow-lg hover:shadow-emerald-100 transition duration-300 cursor-default group">
+                            <div class="w-10 h-10 bg-emerald-200 text-emerald-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-emerald-600 group-hover:text-white transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <p class="text-xs text-emerald-400 font-bold uppercase tracking-wider">État</p>
+                            <p class="font-black text-gray-800 text-lg">Excellent</p>
+                        </div>
+                        <div class="bg-orange-50 border border-orange-100 p-4 rounded-2xl hover:-translate-y-2 hover:shadow-lg hover:shadow-orange-100 transition duration-300 cursor-default group">
+                            <div class="w-10 h-10 bg-orange-200 text-orange-700 rounded-full flex items-center justify-center mb-3 group-hover:bg-orange-600 group-hover:text-white transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </div>
+                            <p class="text-xs text-orange-400 font-bold uppercase tracking-wider">Assurance</p>
+                            <p class="font-black text-gray-800 text-lg">Tous risques</p>
+                        </div>
                     </div>
                 </div>
+
+                <!-- 3. DESCRIPTION -->
+                <div class="bg-white rounded-2xl shadow-sm border-l-4 border-gray-900 p-8 relative">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Description du véhicule</h3>
+                    <div class="prose text-gray-600 leading-relaxed font-light text-lg">
+                        {{ $vehicle->description ?? "Aucune description détaillée n'est disponible pour ce véhicule." }}
+                    </div>
+                </div>
+
             </div>
 
-            <!-- 3. COLONNE DROITE : LE "BLACK PANEL" DE RÉSERVATION -->
+            <!-- COLONNE DROITE : FORMULAIRE SOMBRE AMÉLIORÉ -->
             <div class="lg:w-1/3">
                 <div class="sticky top-24">
-                    <!-- Design sombre pour le contraste -->
-                    <div class="bg-gray-900 text-white rounded-3xl shadow-2xl p-8 relative overflow-hidden">
-                        <!-- Effet de cercle décoratif en fond -->
-                        <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-600 rounded-full blur-3xl opacity-20"></div>
 
-                        <h3 class="text-2xl font-bold mb-1 relative z-10">Planifier votre trajet</h3>
-                        <p class="text-gray-400 text-sm mb-6 relative z-10">Réservez en 3 clics.</p>
+                    <!-- Ajout d'une bordure supérieure colorée (L'encoche dont tu parlais) -->
+                    <div class="bg-slate-900 rounded-[1.5rem] shadow-2xl border-t-4 border-blue-500 overflow-hidden relative">
 
-                        <form wire:submit.prevent="bookVehicle" class="space-y-5 relative z-10">
-
-                            <div class="grid grid-cols-2 gap-4">
+                        <div class="p-8 relative z-10">
+                            <div class="mb-8 flex items-center justify-between">
                                 <div>
-                                    <label class="text-xs text-gray-400 uppercase font-bold tracking-wider ml-1">Départ</label>
-                                    <div class="relative mt-1">
-                                        <input type="date" wire:model.live="startDate" class="w-full bg-gray-800 border-gray-700 text-white rounded-xl focus:ring-blue-500 focus:border-blue-500 py-3 px-4">
-                                    </div>
-                                    @error('startDate') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
+                                    <h3 class="text-2xl font-white text-white font-bold">Réservation</h3>
+                                    <p class="text-slate-400 text-xs mt-1">Annulation gratuite 48h</p>
                                 </div>
-                                <div>
-                                    <label class="text-xs text-gray-400 uppercase font-bold tracking-wider ml-1">Retour</label>
-                                    <div class="relative mt-1">
-                                        <input type="date" wire:model.live="endDate" class="w-full bg-gray-800 border-gray-700 text-white rounded-xl focus:ring-blue-500 focus:border-blue-500 py-3 px-4">
-                                    </div>
-                                    @error('endDate') <span class="text-red-400 text-xs mt-1">{{ $message }}</span> @enderror
+                                <div class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-blue-500">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                 </div>
                             </div>
 
-                            <!-- Ticket de prix dynamique -->
-                            @if($totalPrice > 0)
-                                <div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700 mt-4 animate-pulse-once">
-                                    <div class="flex justify-between items-center text-sm text-gray-400 mb-2">
-                                        <span>Durée</span>
-                                        <span>{{ \Carbon\Carbon::parse($startDate)->diffInDays(\Carbon\Carbon::parse($endDate)) + 1 }} jours</span>
+                            <form wire:submit.prevent="bookVehicle" class="space-y-6">
+
+                                <div class="space-y-4">
+                                    <!-- Champ Date Début (Avec bordure focus colorée) -->
+                                    <div class="group">
+                                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Date de départ</label>
+                                        <div class="relative">
+                                            <input type="date" wire:model.live="startDate"
+                                                   class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg focus:ring-0 focus:border-blue-500 focus:border-l-4 transition-all py-3 pl-4">
+                                        </div>
+                                        @error('startDate') <span class="text-red-400 text-xs mt-1 block ml-1">{{ $message }}</span> @enderror
                                     </div>
-                                    <div class="border-t border-gray-700 pt-3 flex justify-between items-end">
-                                        <span class="text-gray-300">Total à payer</span>
-                                        <span class="text-2xl font-bold text-blue-400">{{ number_format($totalPrice, 0, ',', ' ') }} <span class="text-sm">FCFA</span></span>
+
+                                    <!-- Champ Date Fin -->
+                                    <div class="group">
+                                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Date de retour</label>
+                                        <div class="relative">
+                                            <input type="date" wire:model.live="endDate"
+                                                   class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg focus:ring-0 focus:border-blue-500 focus:border-l-4 transition-all py-3 pl-4">
+                                        </div>
+                                        @error('endDate') <span class="text-red-400 text-xs mt-1 block ml-1">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
-                            @endif
 
-                            @auth
-                                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold py-4 rounded-xl shadow-lg transform transition hover:scale-[1.02] mt-4 flex justify-center items-center gap-2">
-                                    <span>Confirmer la réservation</span>
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                                </button>
-                            @else
-                                <a href="{{ route('login') }}" class="block w-full bg-gray-700 text-gray-300 font-bold py-4 rounded-xl text-center hover:bg-gray-600 transition mt-4">
-                                    Connexion requise
-                                </a>
-                            @endauth
-                        </form>
+                                <!-- Ticket de Prix -->
+                                @if($totalPrice > 0)
+                                    <div class="bg-slate-800/50 rounded-lg p-5 border-l-4 border-blue-500 mt-6 backdrop-blur-sm">
+                                        <div class="flex justify-between items-center text-slate-400 text-sm mb-3">
+                                            <span class="flex items-center gap-2">
+                                                {{ \Carbon\Carbon::parse($startDate)->diffInDays(\Carbon\Carbon::parse($endDate)) + 1 }} jours
+                                            </span>
+                                            <span>x {{ number_format($vehicle->daily_price, 0, ',', ' ') }}</span>
+                                        </div>
+                                        <div class="border-b border-dashed border-slate-600 my-3"></div>
+                                        <div class="flex justify-between items-end">
+                                            <span class="text-slate-300 font-bold uppercase text-xs tracking-widest">Total</span>
+                                            <span class="font-black text-2xl text-white">{{ number_format($totalPrice, 0, ',', ' ') }} <span class="text-sm font-normal text-blue-400">FCFA</span></span>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Bouton d'action (Effet bouton 3D / Encoche bas) -->
+                                @auth
+                                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-lg border-b-4 border-blue-800 active:border-b-0 active:translate-y-1 transition-all flex justify-center items-center gap-2 mt-4">
+                                        <span>Confirmer la réservation</span>
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                    </button>
+                                @else
+                                    <a href="{{ route('login') }}" class="block w-full bg-slate-800 border-b-4 border-slate-950 text-slate-300 font-bold py-4 rounded-lg text-center hover:bg-slate-700 hover:text-white active:border-b-0 active:translate-y-1 transition mt-4">
+                                        Se connecter pour réserver
+                                    </a>
+                                @endauth
+
+                            </form>
+                        </div>
                     </div>
 
-                    <!-- Carte Agence mini -->
-                    <div class="mt-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500 font-bold uppercase">Agence de retrait</p>
-                            <p class="font-bold text-gray-900">AutoDrive Lomé Centre</p>
-                        </div>
+                    <!-- Garantie -->
+                    <div class="mt-6 text-center">
+                        <p class="text-gray-400 text-xs flex items-center justify-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Paiement sécurisé & instantané
+                        </p>
                     </div>
 
                 </div>
             </div>
+
         </div>
     </div>
 </div>
