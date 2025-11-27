@@ -17,36 +17,34 @@
             </div>
 
             <!-- Filtres alignés horizontalement -->
-<div class="flex flex-wrap items-center gap-3 mb-4">
-    <!-- Filtre Statut -->
-    <div class="flex-1 min-w-[180px]">
-        <label for="statusFilter" class="sr-only">Statut</label>
-        <select
-            id="statusFilter"
-            wire:model.live="statusFilter"
-            class="w-full border rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer shadow-sm"
-        >
-            <option value="">Tous les statuts</option>
-            <option value="en_attente">En attente</option>
-            <option value="confirmée">Confirmée</option>
-            <option value="annulée">Annulée</option>
-        </select>
-    </div>
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+                <!-- Filtre Statut -->
+                <div class="flex-1 min-w-[180px]">
+                    <label for="statusFilter" class="sr-only">Statut</label>
+                    <select
+                        id="statusFilter"
+                        wire:model.live="statusFilter"
+                        class="w-full border rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer shadow-sm">
+                        <option value="">Tous les statuts</option>
+                        <option value="en_attente">En attente</option>
+                        <option value="confirmée">Confirmée</option>
+                        <option value="annulée">Annulée</option>
+                    </select>
+                </div>
 
-    <!-- Filtre Paiement -->
-    <div class="flex-1 min-w-[180px]">
-        <label for="paymentFilter" class="sr-only">Paiement</label>
-        <select
-            id="paymentFilter"
-            wire:model.live="paymentFilter"
-            class="w-full border rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer shadow-sm"
-        >
-            <option value="">Tous paiements</option>
-            <option value="payé">Payé</option>
-            <option value="impayé">Impayé</option>
-        </select>
-    </div>
-</div>
+                <!-- Filtre Paiement -->
+                <div class="flex-1 min-w-[180px]">
+                    <label for="paymentFilter" class="sr-only">Paiement</label>
+                    <select
+                        id="paymentFilter"
+                        wire:model.live="paymentFilter"
+                        class="w-full border rounded-lg py-2 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer shadow-sm">
+                        <option value="">Tous paiements</option>
+                        <option value="payé">Payé</option>
+                        <option value="impayé">Impayé</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -184,25 +182,33 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                         </svg>
                                     </button>
+
                                 </div>
-                            </div>
 
-                            @else
+                                @else
 
-                            <!-- CAS 2 : DÉJÀ TRAITÉ -->
-                            <div class="flex flex-col items-center justify-center opacity-60">
-                                <span class="inline-flex items-center gap-1 text-xs font-bold text-black-500 uppercase tracking-wider bg-black-100 px-2 py-1 rounded">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    Traité
-                                </span>
-                                <span class="text-[10px] text-black-400 mt-1">
-                                    le {{ $booking->updated_at->format('d/m') }}
-                                </span>
-                            </div>
+                                <!-- CAS 2 : DÉJÀ TRAITÉ -->
+                                <div class="flex flex-col items-center justify-center opacity-60">
+                                    <span class="inline-flex items-center gap-1 text-xs font-bold text-black-500 uppercase tracking-wider bg-black-100 px-2 py-1 rounded">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Traité
+                                    </span>
+                                    <span class="text-[10px] text-black-400 mt-1">
+                                        le {{ $booking->updated_at->format('d/m') }}
+                                    </span>
+                                    <!-- Bouton Contrat PDF -->
+                                    <a href="{{ route('admin.contract', $booking->id) }}" target="_blank"
+                                        class="group bg-gray-50 hover:bg-blue-500 border border-gray-200 text-gray-500 hover:text-white p-2 rounded-lg transition-all duration-200 shadow-sm"
+                                        title="Télécharger le contrat PDF">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </a>
+                                </div>
 
-                            @endif
+                                @endif
                         </td>
                     </tr>
                     @endforeach

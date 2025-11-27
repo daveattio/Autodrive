@@ -21,6 +21,7 @@
                 ['route' => 'vehicles.index', 'label' => 'Véhicules'],
                 ['route' => 'promotions', 'label' => 'Promotions'],
                 ['route' => 'about', 'label' => 'À propos'],
+                 ['route' => 'blog', 'label' => 'Blog'],
                 ['route' => 'contact', 'label' => 'Contact']
                 ] as $link)
                 <a href="{{ route($link['route']) }}"

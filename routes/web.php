@@ -4,20 +4,41 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Livewire\Front\VehicleDetails;
 use App\Livewire\Front\UserBookings;
-use App\Http\Middleware\IsAdmin; // Important pour la sécurité
+use App\Http\Controllers\PdfController; // Important pour le contrat
+use App\Models\Promotion; // N'oublie pas cet import tout en haut pour les promotions
+use App\Http\Middleware\IsAdmin;
 
-// --- ZONE PUBLIQUE (Tout le monde peut voir) ---
+// ==========================================
+// 1. ZONE PUBLIQUE (Accessible à tous)
+// ==========================================
+
 Route::view('/', 'welcome');
 Route::get('/vehicle/{id}', VehicleDetails::class)->name('vehicle.show');
 
-// Pages statiques
+// Page Véhicules (Catalogue)
 Route::view('/vehicules', 'front.vehicles')->name('vehicles.index');
-Route::view('/promotions', 'front.promotions')->name('promotions');
+
+// Page À propos & Contact
 Route::view('/about', 'front.about')->name('about');
 Route::view('/contact', 'front.contact')->name('contact');
 
+// Page Blog (Nouveau pour le SEO)
+Route::view('/blog', 'front.blog')->name('blog');
 
-// --- ZONE CLIENT (Il faut être connecté) ---
+// Page Promotions (Avec récupération des données depuis la BDD)
+
+Route::get('/promotions', function () {
+    // Changement ici : paginate(6) pour avoir des pages
+    $promotions = Promotion::whereDate('end_date', '>=', now())
+                    ->latest()
+                    ->paginate(6);
+    return view('front.promotions', compact('promotions'));
+})->name('promotions');
+
+
+// ==========================================
+// 2. ZONE CLIENT (Connexion requise)
+// ==========================================
 Route::middleware(['auth'])->group(function () {
 
     // Mes réservations
@@ -28,20 +49,30 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-// --- ZONE ADMIN (Il faut être Admin) ---
+// ==========================================
+// 3. ZONE ADMIN (Rôle Admin requis)
+// ==========================================
 Route::middleware(['auth', IsAdmin::class])->group(function () {
 
-    // C'est ICI que l'on définit la fameuse route "admin.dashboard"
-    // On change l'URL pour /admin/dashboard pour bien séparer
+    // Dashboard Admin
     Route::view('/admin/dashboard', 'dashboard')->name('admin.dashboard');
+
+    // Génération du Contrat PDF
+    Route::get('/admin/contract/{id}', [PdfController::class, 'generateContract'])->name('admin.contract');
 });
-// --- ROUTE DE REDIRECTION INTELLIGENTE ---
-// Cette route s'appelle "dashboard" pour calmer Laravel Breeze.
+
+
+// ==========================================
+// 4. SYSTÈME & REDIRECTION
+// ==========================================
+
+// Route "Dashboard" technique (pour rediriger après login)
 Route::get('/dashboard', function () {
     $user = Auth::user();
     if ($user !== null && $user->role === 'admin') {
         return redirect()->route('admin.dashboard');
     }
-    return redirect()->route('user.bookings');
+    return redirect()->route('user.bookings'); // Redirection vers réservations pour le client
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 require __DIR__ . '/auth.php';

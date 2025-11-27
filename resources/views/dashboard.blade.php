@@ -46,8 +46,11 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-gray-800">
                 <livewire:admin.vehicle-manager />
             </div>
-
-            <!-- Bloc 3 : Gestion des clients -->
+<!-- Bloc 3 : Gestion des promotions -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-green-800">
+                <livewire:admin.promotion-manager />
+            </div>
+            <!-- Bloc 4 : Gestion des clients -->
            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-red-800">
                 <livewire:admin.client-manager />
             </div>
