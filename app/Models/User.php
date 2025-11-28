@@ -24,6 +24,16 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        // Nouveaux champs :
+        'client_type',
+        'phone',
+        'address',
+        'city',
+        'license_number',
+        'passport_number',
+        'origin_country',
+        'company_name',
+        'company_id',
     ];
 
     /**
@@ -59,7 +69,7 @@ class User extends Authenticatable
         return Str::of($this->name)
             ->explode(' ')
             ->take(2)
-            ->map(fn ($word) => Str::substr($word, 0, 1))
+            ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
 }

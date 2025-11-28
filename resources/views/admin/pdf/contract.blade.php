@@ -1,157 +1,425 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
-    <title>Contrat #{{ $booking->id }}</title>
+    <title>Contrat N°{{ $booking->id }}</title>
     <style>
-        @page { margin: 0px; }
-        body { font-family: 'Helvetica', sans-serif; color: #1f2937; line-height: 1.5; font-size: 12px; margin: 40px; }
+        /* RESET & BASES */
+        @page {
+            margin: 0px;
+        }
 
-        /* En-tête */
-        .header { width: 100%; padding-bottom: 20px; border-bottom: 2px solid #2563eb; margin-bottom: 30px; }
-        .logo { font-size: 28px; font-weight: 900; color: #111; letter-spacing: -1px; text-transform: uppercase; }
-        .logo span { color: #2563eb; }
-        .company-details { float: right; text-align: right; font-size: 11px; color: #555; }
+        body {
+            font-family: sans-serif;
+            font-size: 12px;
+            color: #333;
+            line-height: 1.3;
+        }
 
-        /* Titre */
-        .doc-title { text-align: center; margin-bottom: 30px; }
-        .doc-title h1 { font-size: 22px; text-transform: uppercase; margin: 0; color: #1f2937; letter-spacing: 1px; }
-        .doc-title span { font-size: 12px; color: #6b7280; }
+        /* HEADER BLEU (Haut de page) */
+        .header {
+            background-color: #1e3a8a;
+            /* Bleu foncé AutoDrive */
+            color: white;
+            padding: 30px 40px;
+            height: 50px;
+        }
 
-        /* Grille Infos */
-        .info-grid { width: 100%; margin-bottom: 20px; }
-        .info-box { width: 48%; float: left; border: 1px solid #e5e7eb; padding: 15px; border-radius: 5px; background: #f9fafb; }
-        .info-box h3 { margin: 0 0 10px 0; font-size: 14px; border-bottom: 1px solid #ddd; padding-bottom: 5px; color: #2563eb; text-transform: uppercase; }
-        .info-row { margin-bottom: 5px; }
-        .info-label { font-weight: bold; color: #4b5563; }
+        /* LOGO TYPOGRAPHIQUE (Zéro Image) */
+        .logo {
+            font-size: 30px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-        /* Tableau Prix */
-        .pricing-table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 30px; }
-        .pricing-table th { background: #2563eb; color: white; padding: 10px; text-align: left; font-size: 11px; text-transform: uppercase; }
-        .pricing-table td { border: 1px solid #e5e7eb; padding: 10px; }
-        .total-row td { background: #f3f4f6; font-weight: bold; font-size: 14px; color: #111; border-top: 2px solid #2563eb; }
+        .logo span {
+            color: #60a5fa;
+        }
 
-        /* Conditions Générales (Pour remplir la page) */
-        .legal-terms { margin-top: 30px; font-size: 9px; color: #666; text-align: justify; columns: 2; column-gap: 30px; border-top: 1px solid #ddd; padding-top: 20px; }
-        .legal-terms h4 { margin: 0 0 5px 0; font-size: 10px; color: #333; }
-        .legal-terms p { margin-bottom: 10px; }
+        /* Le "Drive" en bleu clair */
+        .sub-logo {
+            font-size: 10px;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
 
-        /* Signatures (Collées en bas) */
-        .signatures { width: 100%; margin-top: 40px; page-break-inside: avoid; }
-        .sig-block { width: 45%; float: left; border: 1px solid #ccc; height: 120px; padding: 10px; border-radius: 5px; }
-        .sig-title { font-weight: bold; font-size: 12px; margin-bottom: 40px; display: block; border-bottom: 1px dashed #ccc; padding-bottom: 5px; }
+        .contract-info {
+            float: right;
+            text-align: right;
+        }
 
-        .footer { position: fixed; bottom: 30px; left: 40px; right: 40px; text-align: center; font-size: 9px; color: #999; border-top: 1px solid #eee; padding-top: 10px; }
+        .contract-label {
+            font-size: 10px;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        .contract-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* CONTENEUR PRINCIPAL */
+        .container {
+            padding: 30px 40px;
+        }
+
+        /* BOITES CLIENT & VEHICULE */
+        table.layout-grid {
+            width: 100%;
+            margin-top: 20px;
+            border-spacing: 0;
+            border-collapse: separate;
+            border-spacing: 15px 0;
+            margin-left: -15px;
+            width: calc(100% + 30px);
+        }
+
+        .box-header {
+            background-color: #f1f5f9;
+            /* Gris très clair */
+            border-top: 3px solid #1e3a8a;
+            padding: 8px 10px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #1e3a8a;
+        }
+
+        .box-content {
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            padding: 10px;
+            height: 80px;
+        }
+
+        .info-row {
+            margin-bottom: 5px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #64748b;
+            font-size: 10px;
+            width: 80px;
+            display: inline-block;
+        }
+
+        .info-value {
+            color: #000;
+            font-weight: 600;
+        }
+
+        /* TABLEAU DE PRIX */
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        .details-table th {
+            background-color: #1e3a8a;
+            color: white;
+            font-size: 10px;
+            text-transform: uppercase;
+            text-align: left;
+            padding: 10px;
+        }
+
+        .details-table td {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 10px;
+        }
+
+        .total-row td {
+            background-color: #1e3a8a;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+        }
+
+        /* TAMPON PAYÉ */
+        .stamp {
+            position: absolute;
+            right: 40px;
+            top: 550px;
+            border: 3px solid #22c55e;
+            /* Vert */
+            color: #0f9e3aff;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 10px 30px;
+            border-radius: 8px;
+            transform: rotate(-15deg);
+            opacity: 0.3;
+        }
+
+        .stamp-unpaid {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        /* SIGNATURES (Collées en bas) */
+        .bottom-wrapper {
+            position: fixed;
+            bottom: 40px;
+            left: 40px;
+            right: 40px;
+        }
+
+        .legal-notice {
+            font-size: 8px;
+            color: #64748b;
+            text-align: justify;
+            border-top: 1px solid #cbd5e1;
+            padding-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .sig-table {
+            width: 100%;
+        }
+
+        .sig-box {
+            border: 1px dashed #cbd5e1;
+            background-color: #f8fafc;
+            height: 80px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .sig-title {
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #475569;
+        }
+
+        .footer {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 8px;
+    color: #94a3b8;
+    background-color: white; /* Ajoute un fond blanc pour éviter la transparence */
+    padding-top: 10px;
+}
+
+        /* PAGE 2 */
+        .page-break {
+            page-break-after: always;
+        }
+
+        .terms-columns {
+            column-count: 2;
+            column-gap: 30px;
+            text-align: justify;
+            font-size: 10px;
+        }
+
+        .terms-columns h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: #1e3a8a;
+            font-size: 11px;
+        }
+
+        .terms-columns p {
+            margin-bottom: 10px;
+        }
+
+        .terms-header {
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #1e3a8a;
+        }
     </style>
 </head>
+
 <body>
 
-    <!-- Header -->
+    <!-- ==================== PAGE 1 ==================== -->
+
+    <!-- Header Bleu -->
     <div class="header">
         <div style="float:left">
-            <div class="logo">Auto<span>Drive</span></div>
-            <small>Solution de location professionnelle</small>
+            <div class="logo">AUTO<span>DRIVE</span></div>
+            <div class="sub-logo">Location de véhicules Premium</div>
         </div>
-        <div class="company-details">
-            <strong>AutoDrive SARL</strong><br>
-            123 Avenue de la Libération<br>
-            Lomé, Togo<br>
-            +228 90 00 00 00 | contact@autodrive.tg
+        <div class="contract-info">
+            <div class="contract-label">Contrat N°</div>
+            <div class="contract-value">{{ str_pad($booking->id, 6, '0', STR_PAD_LEFT) }}</div>
+            <div class="contract-label" style="margin-top:5px;">Date : {{ now()->format('d/m/Y') }}</div>
         </div>
-        <div style="clear:both"></div>
     </div>
 
-    <div class="doc-title">
-        <h1>Contrat de Location</h1>
-        <span>Référence : #{{ str_pad($booking->id, 6, '0', STR_PAD_LEFT) }}</span>
-    </div>
+    <div class="container">
 
-    <!-- Info Boxes -->
-    <div class="info-grid">
-        <div class="info-box">
-            <h3>Le Locataire</h3>
-            <div class="info-row"><span class="info-label">Nom :</span> {{ $booking->user->name }}</div>
-            <div class="info-row"><span class="info-label">Email :</span> {{ $booking->user->email }}</div>
-            <div class="info-row"><span class="info-label">Date :</span> {{ now()->format('d/m/Y') }}</div>
-        </div>
-        <div class="info-box" style="float:right">
-            <h3>Le Véhicule</h3>
-            <div class="info-row"><span class="info-label">Modèle :</span> {{ $booking->vehicle->brand }} {{ $booking->vehicle->name }}</div>
-            <div class="info-row"><span class="info-label">Catégorie :</span> {{ $booking->vehicle->type }}</div>
-            <div class="info-row"><span class="info-label">Transmission :</span> {{ $booking->vehicle->transmission }}</div>
-        </div>
-        <div style="clear:both"></div>
-    </div>
-
-    <!-- Pricing -->
-    <table class="pricing-table">
-        <thead>
+        <!-- Infos Client & Véhicule (Côte à côte) -->
+        <table class="layout-grid">
             <tr>
-                <th width="50%">Désignation</th>
-                <th width="15%">Début</th>
-                <th width="15%">Fin</th>
-                <th width="20%" style="text-align:right">Montant</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    Location de véhicule sans chauffeur<br>
-                    <small style="color:#666;">Kilométrage illimité, Assurance standard incluse</small>
+                <td width="50%">
+                    <div class="box-header">
+                        @if($booking->user->client_type == 'entreprise')
+                        LOCATAIRE (SOCIÉTÉ)
+                        @else
+                        LOCATAIRE (CLIENT)
+                        @endif
+                    </div>
+                    <div class="box-content">
+
+                        <!-- INFOS COMMUNES -->
+                        @if($booking->user->client_type == 'entreprise')
+                        <div class="info-row"><span class="info-label">Société :</span> <span class="info-value">{{ $booking->user->company_name }}</span></div>
+                        <div class="info-row"><span class="info-label">NIF/RCCM :</span> <span class="info-value">{{ $booking->user->company_id }}</span></div>
+                        <div class="info-row"><span class="info-label">Représentant :</span> <span class="info-value">{{ $booking->user->name }}</span></div>
+                        @else
+                        <div class="info-row"><span class="info-label">Nom :</span> <span class="info-value">{{ $booking->user->name }}</span></div>
+                        <!-- Permis ou Passeport -->
+                        @if($booking->user->client_type == 'touriste')
+                        <div class="info-row"><span class="info-label">Passeport :</span> <span class="info-value">{{ $booking->user->passport_number }} ({{ $booking->user->origin_country }})</span></div>
+                        @else
+                        <div class="info-row"><span class="info-label">Permis N° :</span> <span class="info-value">{{ $booking->user->license_number }}</span></div>
+                        @endif
+                        @endif
+
+                        <div class="info-row"><span class="info-label">Tél :</span> <span class="info-value">{{ $booking->user->phone }}</span></div>
+                        <div class="info-row"><span class="info-label">Ville :</span> <span class="info-value">{{ $booking->user->city }}</span></div>
+                    </div>
                 </td>
-                <td>{{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}</td>
-                <td style="text-align:right">{{ number_format($booking->total_price, 0, ',', ' ') }} FCFA</td>
+                <td width="50%">
+                    <div class="box-header">Véhicule Loué</div>
+                    <div class="box-content">
+                        <div class="info-row"><span class="info-label">Modèle :</span> <span class="info-value" style="color:#1e3a8a;">{{ $booking->vehicle->brand }} {{ $booking->vehicle->name }}</span></div>
+                        <div class="info-row"><span class="info-label">Catégorie :</span> <span class="info-value">{{ $booking->vehicle->type }}</span></div>
+                        <div class="info-row"><span class="info-label">Transm. :</span> <span class="info-value">{{ $booking->vehicle->transmission }}</span></div>
+                    </div>
+                </td>
             </tr>
-            <tr class="total-row">
-                <td colspan="3" style="text-align:right;">TOTAL NET À PAYER</td>
-                <td style="text-align:right;">{{ number_format($booking->total_price, 0, ',', ' ') }} FCFA</td>
-            </tr>
-        </tbody>
-    </table>
+        </table>
 
-    <div style="text-align:right; font-size:12px; margin-bottom:20px;">
-        Statut du paiement :
-        <strong style="color: '{{ $booking->payment_status == 'payé' ? 'green' : 'red' }}'">
-            {{ strtoupper($booking->payment_status) }}
-        </strong>
-    </div>
+        <!-- Tableau Détails -->
+        <div class="box-header" style="margin-top:20px;">Détails de la prestation</div>
+        <table class="details-table">
+            <thead>
+                <tr>
+                    <th width="40%">Description</th>
+                    <th width="20%">Départ</th>
+                    <th width="20%">Retour</th>
+                    <th width="20%" style="text-align:right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Location courte durée</strong><br>
+                        <span style="font-size:9px; color:#666;">Kilométrage illimité, Assurance tous risques</span>
+                    </td>
+                    <td>
+                        {{ \Carbon\Carbon::parse($booking->start_date)->format('d/m/Y') }}<br>
+                        <small style="color:#999">08:00</small>
+                    </td>
+                    <td>
+                        {{ \Carbon\Carbon::parse($booking->end_date)->format('d/m/Y') }}<br>
+                        <small style="color:#999">18:00</small>
+                    </td>
+                    <td style="text-align:right; font-weight:bold;">{{ number_format($booking->total_price, 0, ',', ' ') }} FCFA</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3" style="text-align:right; text-transform:uppercase;">Net à Payer</td>
+                    <td style="text-align:right;">{{ number_format($booking->total_price, 0, ',', ' ') }} FCFA</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <!-- Conditions Générales (Pour remplir la page) -->
-    <div class="legal-terms">
-        <h4>ARTICLE 1 - OBJET DU CONTRAT</h4>
-        <p>Le présent contrat a pour objet la location d'un véhicule automobile sans chauffeur. Le locataire reconnaît avoir reçu le véhicule en parfait état de marche et de propreté.</p>
+        <!-- Tampon Automatique -->
+        @if($booking->payment_status == 'payé')
+        <div class="stamp">PAYÉ</div>
+        @else
+        <div class="stamp stamp-unpaid">IMPAYÉ</div>
+        @endif
 
-        <h4>ARTICLE 2 - DURÉE ET RESTITUTION</h4>
-        <p>La location est consentie pour la durée déterminée au présent contrat. Le véhicule doit être restitué aux date et heure prévues. Tout dépassement de plus de 2 heures entraînera la facturation d'une journée supplémentaire.</p>
+        <!-- Bas de page (Signatures) -->
+        <div class="bottom-wrapper">
+            <div class="legal-notice">
+                <strong>Déclaration :</strong> Le locataire reconnaît avoir pris connaissance des conditions générales de location au verso et les accepte sans réserve. Il déclare avoir reçu le véhicule en parfait état de marche, de carrosserie et de propreté, avec le plein de carburant. Le locataire est responsable de toutes les infractions au code de la route commises pendant la durée de la location.
+            </div>
 
-        <h4>ARTICLE 3 - ASSURANCES ET RESPONSABILITÉ</h4>
-        <p>Le locataire est couvert par une assurance responsabilité civile. Toutefois, il reste responsable des dommages causés au véhicule à hauteur de la franchise en vigueur. Les dégâts causés aux pneumatiques, bris de glace et bas de caisse restent à la charge exclusive du locataire.</p>
-
-        <h4>ARTICLE 4 - OBLIGATIONS DU LOCATAIRE</h4>
-        <p>Le locataire s'engage à utiliser le véhicule en bon père de famille, à ne pas transporter de marchandises prohibées, et à ne pas sous-louer le véhicule. Le carburant est à la charge du locataire.</p>
-
-        <h4>ARTICLE 5 - PAIEMENT ET DÉPÔT DE GARANTIE</h4>
-        <p>Le paiement de la location est dû à la prise en charge du véhicule. Un dépôt de garantie peut être exigé par carte bancaire. En cas de non-paiement, le loueur se réserve le droit de reprendre le véhicule sans préavis.</p>
-
-        <h4>ARTICLE 6 - LITIGES</h4>
-        <p>En cas de litige, les tribunaux de Lomé sont seuls compétents. Le présent contrat est régi par la loi togolaise.</p>
-    </div>
-
-    <!-- Signatures -->
-    <div class="signatures">
-        <div class="sig-block">
-            <span class="sig-title">POUR L'AGENCE (Cachet & Signature)</span>
+            <table class="sig-table">
+                <tr>
+                    <td width="48%">
+                        <div class="sig-box">
+                            <div class="sig-title">Pour AutoDrive (Cachet)</div>
+                        </div>
+                    </td>
+                    <td width="4%"></td>
+                    <td width="48%">
+                        <div class="sig-box">
+                            <div class="sig-title">Le Locataire (Signature)</div>
+                            <div style="margin-top:40px; font-size:8px; text-align:right; color:#94a3b8;">Lu et approuvé</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div class="sig-block" style="float:right">
-            <span class="sig-title">LE LOCATAIRE (Lu et approuvé)</span>
-        </div>
-        <div style="clear:both"></div>
+
     </div>
 
     <div class="footer">
-        AutoDrive SARL - Capital de 10.000.000 FCFA - RCCM Lomé 2025 - NIF 123456789 - Page 1/1
+        AutoDrive Togo SARL - Capital de 10.000.000 FCFA - RCCM TG-LOM-2025-B-1234 - Siège social : Lomé - Page 1/2
+    </div>
+
+    <!-- ==================== PAGE 2 ==================== -->
+    <div class="page-break"></div>
+
+    <div class="container" style="padding-top:50px;">
+        <div class="terms-header">CONDITIONS GÉNÉRALES DE LOCATION</div>
+
+        <div class="terms-columns">
+            <h4>ARTICLE 1 - OBJET ET DURÉE</h4>
+            <p>Le présent contrat a pour objet la location d'un véhicule sans chauffeur. La location est consentie pour une durée ferme précisée aux conditions particulières. Toute prolongation doit être autorisée par le loueur sous peine de poursuites judiciaires pour détournement de véhicule.</p>
+
+            <h4>ARTICLE 2 - CONDUCTEUR</h4>
+            <p>Le véhicule ne peut être conduit que par le locataire ou les conducteurs agréés par le loueur. Le conducteur doit être âgé d'au moins 21 ans et titulaire d'un permis de conduire valide depuis plus de 2 ans.</p>
+
+            <h4>ARTICLE 3 - ÉTAT DU VÉHICULE</h4>
+            <p>Le véhicule est remis en parfait état de marche. Un état des lieux est effectué au départ et au retour. Tout dommage constaté au retour et non présent à l'état des lieux de départ sera facturé au locataire selon le barème en vigueur.</p>
+
+            <h4>ARTICLE 4 - CARBURANT</h4>
+            <p>Le véhicule est livré avec le plein de carburant. Il doit être restitué avec le plein. À défaut, le complément sera facturé au locataire majoré de frais de service de 5.000 FCFA.</p>
+
+            <h4>ARTICLE 5 - ENTRETIEN ET PANNES</h4>
+            <p>Le locataire doit vérifier régulièrement les niveaux. En cas de panne mécanique non due à une négligence du locataire, le loueur assure le dépannage ou le remplacement du véhicule. Les crevaisons sont à la charge du locataire.</p>
+
+            <h4>ARTICLE 6 - ASSURANCES ET FRANCHISE</h4>
+            <p>Le locataire est assuré pour les dommages causés aux tiers. En cas d'accident responsable ou sans tiers identifié, une franchise non rachetable restera à la charge du locataire. Le vol n'est couvert que sur présentation des clés du véhicule.</p>
+
+            <h4>ARTICLE 7 - RESPONSABILITÉ</h4>
+            <p>Le locataire est seul responsable des amendes, contraventions et procès-verbaux établis à son encontre pendant la période de location.</p>
+
+            <h4>ARTICLE 8 - DÉPÔT DE GARANTIE</h4>
+            <p>Un dépôt de garantie est exigé au départ. Il ne pourra servir au paiement de la location. Il sera restitué en fin de location après déduction des éventuels frais de remise en état.</p>
+
+            <h4>ARTICLE 9 - JURIDICTION</h4>
+            <p>En cas de litige, les tribunaux du siège social du loueur sont seuls compétents. Le présent contrat est soumis à la loi en vigueur dans le pays de location.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        Page 2/2 - Conditions Générales de Location - AutoDrive S.A.
     </div>
 
 </body>
+
 </html>
