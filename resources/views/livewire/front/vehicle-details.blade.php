@@ -43,10 +43,35 @@
                 <div class="absolute top-0 right-0 w-20 h-full bg-white/5 skew-x-12 -mr-10 transition group-hover:mr-0 duration-500"></div>
 
                 <p class="text-gray-400 text-xs uppercase tracking-widest mb-1 font-semibold">Tarif journalier</p>
+                @if($activePromo)
+                <!-- CAS : PROMO ACTIVE -->
+                <div class="flex flex-col items-end">
+                    <!-- Badge Rouge -->
+                    <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded mb-1 animate-pulse">
+                        PROMO -{{ $activePromo->discount_discount_percent }}%
+                    </span>
+
+                    <!-- Ancien prix barré -->
+                    <span class="text-gray-500 line-through text-sm decoration-red-500">
+                        {{ number_format($vehicle->daily_price, 0, ',', ' ') }}
+                    </span>
+
+                    <!-- Nouveau Prix -->
+                    <div class="text-4xl font-black text-blue-400 flex items-baseline justify-end gap-1">
+                        @php
+                        $newPrice = $vehicle->daily_price * (1 - $activePromo->discount_percent / 100);
+                        @endphp
+                        {{ number_format($newPrice, 0, ',', ' ') }}
+                        <span class="text-sm font-medium text-gray-500">FCFA</span>
+                    </div>
+                </div>
+                @else
+                <!-- CAS : PRIX NORMAL -->
                 <div class="text-4xl font-black flex items-baseline justify-end gap-1">
                     {{ number_format($vehicle->daily_price, 0, ',', ' ') }}
-                    <span class="text-lg font-medium text-gray-500">FCFA</span>
+                    <span class="text-sm font-medium text-gray-500">FCFA</span>
                 </div>
+                @endif
             </div>
         </div>
 
@@ -215,19 +240,49 @@
                                     </div>
                                 </div>
 
-                                <!-- Ticket de Prix -->
+                                <!-- Ticket de Prix Intelligent -->
                                 @if($totalPrice > 0)
                                 <div class="bg-slate-800/50 rounded-lg p-5 border-l-4 border-blue-500 mt-6 backdrop-blur-sm">
-                                    <div class="flex justify-between items-center text-slate-400 text-sm mb-3">
+
+                                    <!-- Détail jours -->
+                                    <div class="flex justify-between items-center text-slate-400 text-sm mb-2">
                                         <span class="flex items-center gap-2">
                                             {{ \Carbon\Carbon::parse($startDate)->diffInDays(\Carbon\Carbon::parse($endDate)) + 1 }} jours
                                         </span>
                                         <span>x {{ number_format($vehicle->daily_price, 0, ',', ' ') }}</span>
                                     </div>
+
+                                    <!-- SI PROMO ACTIVE : On affiche le détail -->
+                                    @if($activePromo)
+                                    <div class="flex justify-between items-center text-green-400 text-sm mb-2 font-bold animate-pulse">
+                                        <span class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                            </svg>
+                                            <!-- CORRECTION ICI : discount_percent -->
+                                            Promo : -{{ $activePromo->discount_percent }}%
+                                        </span>
+                                        <span class="text-xs bg-green-900/50 px-2 py-1 rounded">{{ $activePromo->title }}</span>
+                                    </div>
+
+                                    <div class="border-b border-dashed border-slate-600 my-2"></div>
+
+                                    <!-- Prix Barré -->
+                                    <div class="text-right flex flex-col">
+                                        <span class="text-slate-500 text-xs">Prix normal</span>
+                                        <span class="text-slate-400 line-through text-sm">{{ number_format($originalPrice, 0, ',', ' ') }} FCFA</span>
+                                    </div>
+                                    @else
                                     <div class="border-b border-dashed border-slate-600 my-3"></div>
-                                    <div class="flex justify-between items-end">
-                                        <span class="text-slate-300 font-bold uppercase text-xs tracking-widest">Total</span>
-                                        <span class="font-black text-2xl text-white">{{ number_format($totalPrice, 0, ',', ' ') }} <span class="text-sm font-normal text-blue-400">FCFA</span></span>
+                                    @endif
+
+                                    <!-- Total Final -->
+                                    <div class="flex justify-between items-end mt-2 pt-2 border-t border-slate-700">
+                                        <span class="text-slate-300 font-bold uppercase text-xs tracking-widest">Total à payer</span>
+                                        <span class="font-black text-3xl text-white">
+                                            {{ number_format($totalPrice, 0, ',', ' ') }}
+                                            <span class="text-sm font-normal text-blue-400">FCFA</span>
+                                        </span>
                                     </div>
                                 </div>
                                 @endif

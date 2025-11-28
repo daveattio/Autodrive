@@ -21,4 +21,8 @@ class Vehicle extends Model
         'image',
         'is_available'
     ];
+    public function promotions()
+{
+    return $this->hasMany(Promotion::class);
+}
 }

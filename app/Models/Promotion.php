@@ -13,6 +13,11 @@ class Promotion extends Model
         'start_date',
         'end_date',
         'image',
-        'is_active'
+        'is_active',
+        'vehicle_id',
     ];
+    public function vehicle()
+{
+    return $this->belongsTo(Vehicle::class);
+}
 }

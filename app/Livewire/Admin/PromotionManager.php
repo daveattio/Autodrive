@@ -5,11 +5,15 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\Promotion;
 use Livewire\WithFileUploads;
+use App\Models\Vehicle; // Import du modèle Vehicle
 
 class PromotionManager extends Component
 {
     use WithFileUploads;
 
+    //IMPORTANT : On déclare la variable pour la liste
+    public $vehicle_id;
+    public $vehicles_list;
     // Variables du formulaire
     public $title, $description, $discount_percent, $start_date, $end_date, $image;
 
@@ -31,6 +35,7 @@ class PromotionManager extends Component
     public function mount()
     {
         $this->refreshPromos();
+        $this->vehicles_list = Vehicle::all(); // Charger la liste des véhicules
     }
 
     public function refreshPromos()
@@ -51,40 +56,48 @@ class PromotionManager extends Component
             $this->end_date = $promo->end_date;
             $this->oldImage = $promo->image;
             $this->isEditMode = true;
+            $this->vehicle_id = $promo->vehicle_id; // Charger le vehicle_id existant
         }
     }
 
     // 2. SAUVEGARDER (Création OU Modification)
     public function savePromo()
     {
-        $this->validate();
+        // 1. Validation (Note que j'utilise discount_percent ici aussi)
+        $this->validate([
+            'title' => 'required',
+            'discount_percent' => 'required|numeric|max:100', // Correspond à ta BDD
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'image' => 'nullable|image|max:2048',
+            'vehicle_id' => 'nullable|exists:vehicles,id', // On valide que le véhicule existe
+        ]);
 
+        // 2. Préparation des données
         $data = [
             'title' => $this->title,
             'description' => $this->description,
-            'discount_percent' => $this->discount_percent,
+            'discount_percent' => $this->discount_percent, // Ton nouveau nom de colonne
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
+            // C'EST ICI QUE ÇA BLOQUAIT :
+            // Si la liste est sur "Aucun" (vide), on met NULL. Sinon on met l'ID.
+            'vehicle_id' => $this->vehicle_id === "" ? null : $this->vehicle_id,
         ];
 
-        // Gestion de l'image
+        // 3. Gestion Image
         if ($this->image) {
             $data['image'] = $this->image->store('promos', 'public');
         }
 
+        // 4. Sauvegarde
         if ($this->isEditMode) {
-            // MODE MODIFICATION
             $promo = Promotion::find($this->promoIdToEdit);
             $promo->update($data);
-            session()->flash('message', 'Promotion mise à jour avec succès !');
+            session()->flash('message', 'Promotion modifiée !');
         } else {
-            // MODE CRÉATION
-            // On ajoute l'image seulement si elle existe (sinon null)
-            if (!isset($data['image'])) {
-                $data['image'] = null;
-            }
             Promotion::create($data);
-            session()->flash('message', 'Promotion créée avec succès !');
+            session()->flash('message', 'Promotion créée !');
         }
 
         $this->cancelEdit();
@@ -94,7 +107,7 @@ class PromotionManager extends Component
     // 3. ANNULER / RESET
     public function cancelEdit()
     {
-        $this->reset(['title', 'description', 'discount_percent', 'start_date', 'end_date', 'image', 'promoIdToEdit', 'isEditMode', 'oldImage']);
+        $this->reset(['title', 'description', 'discount_percent', 'start_date', 'end_date', 'image', 'promoIdToEdit', 'isEditMode', 'oldImage', 'vehicle_id']);
     }
 
     public function deletePromo($id)
