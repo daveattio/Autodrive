@@ -144,10 +144,9 @@
                 </div>
             </div>
 
-            <!-- COLONNE DROITE : FORMULAIRE OPTIMISÉ (33%) -->
+            <!-- COLONNE DROITE : FORMULAIRE RÉPARÉ -->
             <div class="lg:w-1/3">
 
-                <!-- Style Scrollbar -->
                 <style>
                     .custom-scrollbar::-webkit-scrollbar {
                         width: 6px;
@@ -161,31 +160,20 @@
                         background-color: #334155;
                         border-radius: 20px;
                     }
-
-                    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                        background-color: #475569;
-                    }
                 </style>
 
                 <div class="sticky top-24">
-                    <!-- Hauteur Max et Flexbox pour le scroll -->
                     <div class="bg-slate-900 rounded-[1.5rem] shadow-2xl border-t-4 border-blue-500 overflow-hidden relative flex flex-col max-h-[85vh]">
 
-                        <!-- En-tête Fixe -->
+                        <!-- En-tête -->
                         <div class="p-6 pb-2 border-b border-slate-800 bg-slate-900 z-20 shrink-0">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <h3 class="text-xl font-white text-white font-bold">Réservation</h3>
+                                    <h3 class="text-xl font-bold text-white">Réservation</h3>
                                     <p class="text-slate-400 text-xs mt-1">Annulation gratuite 48h</p>
                                 </div>
                                 @if($activePromo)
                                 <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded animate-pulse">-{{ $activePromo->discount_percent }}%</span>
-                                @else
-                                <div class="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center text-blue-500">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
                                 @endif
                             </div>
                         </div>
@@ -193,42 +181,56 @@
                         <!-- ZONE SCROLLABLE -->
                         <div class="p-6 pt-4 overflow-y-auto custom-scrollbar flex-grow">
 
-                            <!-- Disponibilité -->
-                            @php
-                            $busyDates = \App\Models\Booking::where('vehicle_id', $vehicle->id)
-                            ->where('status', '!=', 'annulée')
-                            ->whereDate('end_date', '>=', now())
-                            ->orderBy('start_date')
-                            ->get();
-                            @endphp
-
-                            @if($busyDates->count() > 0)
-                            <div class="bg-red-900/30 border border-red-500/50 p-3 rounded-lg mb-5">
-                                <h4 class="text-red-400 font-bold text-xs mb-1 flex items-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    Dates indisponibles :
-                                </h4>
-                                <div class="flex flex-wrap gap-1">
-                                    @foreach($busyDates as $busy)
-                                    <span class="text-[10px] bg-red-500/20 text-red-300 px-2 py-0.5 rounded border border-red-500/30">
-                                        {{ \Carbon\Carbon::parse($busy->start_date)->format('d/m/Y') }}
-                                        au
-                                        {{ \Carbon\Carbon::parse($busy->end_date)->format('d/m/Y') }}
-                                    </span>
+                            <!-- 1. ALERTE ERREUR (SI LA RÉSERVATION ECHOUE, TU VERRAS POURQUOI) -->
+                            @if ($errors->any())
+                            <div class="bg-red-500/20 border border-red-500 text-red-200 p-3 rounded-lg mb-4 text-xs">
+                                <strong>Erreur de validation :</strong>
+                                <ul class="list-disc ml-4 mt-1">
+                                    @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
                                     @endforeach
-                                </div>
+                                </ul>
                             </div>
                             @endif
 
                             <form wire:submit.prevent="bookVehicle" class="space-y-5">
 
-                                <!-- 1. TYPE DE CLIENT (Avec Réinitialisation) -->
+                                <!-- 2. TYPE DE CLIENT (AVEC LA BONNE FONCTION PHP) -->
+                                <!-- 1. TYPE DE CLIENT (Intelligent) -->
                                 <div>
                                     <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Je suis</label>
-                                    <div class="grid grid-cols-3 gap-1 bg-slate-800 p-1 rounded-lg">
 
+                                    @if($profileLocked)
+                                    <!-- CAS 1 : C'EST UN CLIENT FIDÈLE (Profil Verrouillé) -->
+                                    <div class="bg-slate-800 p-3 rounded-lg border border-blue-500/30 flex justify-between items-center shadow-inner">
+                                        <div class="flex items-center gap-3">
+                                            <div class="p-1.5 bg-blue-500/20 rounded-md text-blue-400">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <span class="text-[10px] text-slate-400 block uppercase tracking-wider">Profil enregistré</span>
+                                                <span class="text-sm font-bold text-white uppercase">{{ ucfirst($client_type) }}</span>
+                                            </div>
+                                        </div>
+                                        <!-- Cadenas -->
+                                        <div class="text-slate-500" title="Profil verrouillé pour la cohérence des contrats">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <p class="text-[9px] text-blue-400/60 mt-1.5 ml-1 flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Vos informations sont pré-remplies.
+                                    </p>
+
+                                    @else
+                                    <!-- CAS 2 : NOUVEAU CLIENT (Choix Libre) -->
+                                    <div class="grid grid-cols-3 gap-1 bg-slate-800 p-1 rounded-lg">
                                         <button type="button" wire:click="setClientType('particulier')"
                                             class="py-1.5 text-xs font-bold rounded transition text-center {{ $client_type == 'particulier' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white hover:bg-slate-700' }}">
                                             Particulier
@@ -243,109 +245,75 @@
                                             class="py-1.5 text-xs font-bold rounded transition text-center {{ $client_type == 'touriste' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white hover:bg-slate-700' }}">
                                             Touriste
                                         </button>
-
                                     </div>
+                                    @endif
                                 </div>
 
-                                <!-- INFOS DYNAMIQUES -->
+                                <!-- 3. INFOS DYNAMIQUES (AVEC WIRE:KEY) -->
                                 <div class="space-y-3 pb-2 border-b border-slate-800">
                                     <div class="grid grid-cols-2 gap-3">
                                         <input type="text" wire:model="phone" placeholder="Téléphone" class="bg-slate-800 border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-500">
                                         <input type="text" wire:model="city" placeholder="Ville" class="bg-slate-800 border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-500">
                                     </div>
+                                    <input type="text" wire:model="address" placeholder="Adresse" class="w-full bg-slate-800 border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-500">
 
-                                    <input type="text" wire:model="address" placeholder="Adresse complète" class="w-full bg-slate-800 border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-500">
-
-                                    <!-- ... (Tes champs téléphone et adresse restent ici) ... -->
-
-                                    <!-- SI PARTICULIER -->
-                                    @if($client_type == 'particulier')
-                                    <div wire:key="fields-particulier">
-                                        <input type="text" wire:model="license_number" placeholder="Numéro de Permis de conduire"
-                                            class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-500 transition-all">
-                                        @error('license_number') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
-                                    </div>
-                                    @endif
-
-                                    <!-- SI ENTREPRISE -->
-                                    @if($client_type == 'entreprise')
-                                    <div wire:key="fields-entreprise" class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <input type="text" wire:model="company_name" placeholder="Nom Société"
-                                                class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 placeholder-slate-500">
-                                            @error('company_name') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
-                                        </div>
-                                        <div>
-                                            <input type="text" wire:model="company_id" placeholder="NIF / RCCM"
-                                                class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 placeholder-slate-500">
-                                            @error('company_id') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
-                                        </div>
-                                    </div>
-                                    @endif
-
-                                    <!-- SI TOURISTE -->
-                                    @if($client_type == 'touriste')
-                                    <div wire:key="fields-touriste" class="space-y-3">
+                                    <div wire:key="fields-{{ $client_type }}" class="space-y-3">
+                                        @if($client_type == 'particulier')
+                                        <input type="text" wire:model="license_number" placeholder="N° Permis de conduire" class="w-full bg-slate-800 border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-500">
+                                        @elseif($client_type == 'entreprise')
                                         <div class="grid grid-cols-2 gap-3">
-                                            <div>
-                                                <input type="text" wire:model="passport_number" placeholder="N° Passeport"
-                                                    class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 placeholder-slate-500">
-                                                @error('passport_number') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
-                                            </div>
-                                            <div>
-                                                <input type="text" wire:model="origin_country" placeholder="Pays"
-                                                    class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 placeholder-slate-500">
-                                                @error('origin_country') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
-                                            </div>
+                                            <input type="text" wire:model="company_name" placeholder="Nom Société" class="bg-slate-800 border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 placeholder-slate-500">
+                                            <input type="text" wire:model="company_id" placeholder="NIF / RCCM" class="bg-slate-800 border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 placeholder-slate-500">
                                         </div>
-                                        <div>
-                                            <input type="text" wire:model="license_number" placeholder="Permis International"
-                                                class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 placeholder-slate-500">
-                                            @error('license_number') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                        @elseif($client_type == 'touriste')
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <input type="text" wire:model="passport_number" placeholder="N° Passeport" class="bg-slate-800 border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 placeholder-slate-500">
+                                            <input type="text" wire:model="origin_country" placeholder="Pays" class="bg-slate-800 border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 placeholder-slate-500">
                                         </div>
-                                    </div>
-                                    @endif
-                                </div>
-
-                                <!-- DATES -->
-                                <div class="space-y-3">
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div class="group">
-                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Départ</label>
-                                            <input type="date" wire:model.live="startDate" class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg py-2 px-3 focus:border-blue-500">
-                                            @error('startDate') <span class="text-red-400 text-[10px] block">{{ $message }}</span> @enderror
-                                        </div>
-                                        <div class="group">
-                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Retour</label>
-                                            <input type="date" wire:model.live="endDate" class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg py-2 px-3 focus:border-blue-500">
-                                            @error('endDate') <span class="text-red-400 text-[10px] block">{{ $message }}</span> @enderror
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- TICKET PRIX -->
-                                @if($totalPrice > 0)
-                                <div class="bg-slate-800/80 rounded-lg p-4 border-l-4 border-blue-500 backdrop-blur-sm mt-4">
-                                    <div class="flex justify-between items-end">
-                                        <div class="flex justify-between items-end mt-2 pt-2 border-t border-slate-700">
-                                        <span class="text-slate-300 font-bold uppercase text-xs tracking-widest">Total à payer</span>
-                                        <span class="font-black text-3xl text-white">
-                                            {{ number_format($totalPrice, 0, ',', ' ') }}
-                                            <span class="text-sm font-normal text-blue-400">FCFA</span>
-                                        </span>
-                                    </div>
-
-                                        @if($activePromo)
-                                        <div class="text-right">
-                                            <span class="text-[10px] text-slate-500 line-through block">{{ number_format($originalPrice, 0, ',', ' ') }}</span>
-                                            <span class="text-xs text-green-400 font-bold">Promo -{{ $activePromo->discount_percent }}%</span>
-                                        </div>
+                                        <input type="text" wire:model="license_number" placeholder="Permis International" class="w-full bg-slate-800 border-slate-700 text-white text-xs rounded-lg py-2.5 px-3 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-500">
                                         @endif
                                     </div>
                                 </div>
+
+                                <!-- 4. DATES -->
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Départ</label>
+                                        <input type="date" wire:model.live="startDate" class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg py-2 px-3 focus:border-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Retour</label>
+                                        <input type="date" wire:model.live="endDate" class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg py-2 px-3 focus:border-blue-500">
+                                    </div>
+                                </div>
+
+                                <!-- 5. PRIX CORRIGÉ (Pas de div en trop) -->
+                                @if($totalPrice > 0)
+                                <div class="bg-slate-800/80 rounded-lg p-4 border-l-4 border-blue-500 backdrop-blur-sm mt-4">
+                                    <div class="flex justify-between items-center text-slate-400 text-xs mb-2">
+                                        <span class="flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            {{ \Carbon\Carbon::parse($startDate)->diffInDays(\Carbon\Carbon::parse($endDate)) + 1 }} jours
+                                        </span>
+                                        <span>x {{ number_format($vehicle->daily_price, 0, ',', ' ') }}</span>
+                                    </div>
+
+                                    <div class="flex justify-between items-end border-t border-slate-700 pt-2 mt-2">
+                                        <span class="text-slate-300 font-bold uppercase text-xs tracking-widest">Total à payer</span>
+                                        <span class="font-black text-2xl text-white">{{ number_format($totalPrice, 0, ',', ' ') }} <span class="text-xs font-normal text-blue-400">FCFA</span></span>
+                                    </div>
+
+                                    @if($activePromo)
+                                    <div class="text-right mt-1">
+                                        <span class="text-[10px] text-slate-500 line-through block">{{ number_format($originalPrice, 0, ',', ' ') }}</span>
+                                        <span class="text-xs text-green-400 font-bold">Promo -{{ $activePromo->discount_percent }}%</span>
+                                    </div>
+                                    @endif
+                                </div>
                                 @endif
 
-                                <!-- BOUTON -->
                                 @auth
                                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-lg shadow-lg border-b-4 border-blue-800 active:border-b-0 active:translate-y-1 transition-all flex justify-center items-center gap-2 mt-4">
                                     <span>Confirmer la réservation</span>
@@ -354,22 +322,16 @@
                                     </svg>
                                 </button>
                                 @else
-                                <a href="{{ route('login') }}" class="block w-full bg-slate-800 border border-slate-700 text-slate-300 font-bold py-3 rounded-lg text-center hover:bg-slate-700 hover:text-white transition mt-4">
-                                    Se connecter pour réserver
+                                <a href="{{ route('login') }}" class="block w-full bg-slate-800 border-b-4 border-slate-950 text-slate-300 font-bold py-3 rounded-lg text-center hover:bg-slate-700 hover:text-white transition mt-4">
+                                    Se connecter
                                 </a>
                                 @endauth
 
                             </form>
                         </div>
 
-                        <!-- Footer Fixe -->
-                        <div class="bg-slate-950 p-3 text-center border-t border-slate-800 z-20 shrink-0">
-                            <p class="text-slate-500 text-[10px] flex items-center justify-center gap-2">
-                                <svg class="w-3 h-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                Données chiffrées et sécurisées
-                            </p>
+                        <div class="bg-slate-950 p-2 text-center border-t border-slate-800 z-20 shrink-0">
+                            <p class="text-slate-600 text-[9px]">Paiement 100% sécurisé</p>
                         </div>
 
                     </div>

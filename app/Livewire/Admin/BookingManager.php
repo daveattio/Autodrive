@@ -5,6 +5,10 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\Booking;
 use Livewire\WithPagination; // 1. Pour la pagination
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservationConfirmed; // N'oublie pas l'import !
+use App\Exports\BookingsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BookingManager extends Component
 {
@@ -36,6 +40,11 @@ class BookingManager extends Component
             if (!session()->has('warning')) {
                 session()->flash('message', 'Statut mis à jour.');
             }
+            if ($status === 'confirmée') {
+            // On envoie le mail au client
+            Mail::to($booking->user->email)->send(new ReservationConfirmed($booking));
+            session()->flash('message', 'Statut mis à jour et Email de confirmation envoyé !');
+        }
         }
     }
 
@@ -73,4 +82,13 @@ class BookingManager extends Component
             'bookings' => $query->latest()->paginate(10) // 10 par page
         ]);
     }
+
+    public function exportExcel(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+{
+    // On passe les variables actuelles ($this->search, etc.) au constructeur de l'export
+    return Excel::download(
+        new BookingsExport($this->search, $this->statusFilter, $this->paymentFilter),
+        'reservations_' . date('d-m-Y') . '.xlsx'
+    );
+}
 }

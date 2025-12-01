@@ -72,7 +72,7 @@ Route::get('/dashboard', function () {
     if ($user !== null && $user->role === 'admin') {
         return redirect()->route('admin.dashboard');
     }
-    return redirect()->route('user.bookings'); // Redirection vers réservations pour le client
+    return redirect()->route('vehicles.index'); // Redirection vers réservations pour le client
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 require __DIR__ . '/auth.php';
