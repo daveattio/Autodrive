@@ -1,4 +1,4 @@
-<div class="space-y-8">
+<div class="space-y-8" wire:poll.30s>
 
     <!-- 1. KPI CARDS (Grille de 3 colonnes -> 6 Cartes au total) -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

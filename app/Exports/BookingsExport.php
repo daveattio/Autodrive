@@ -3,60 +3,67 @@
 namespace App\Exports;
 
 use App\Models\Booking;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery; // Changement ici
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class BookingsExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class BookingsExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
 {
-    protected $search;
-    protected $status;
-    protected $payment;
+    protected $ids;
+    protected $filters;
 
-    // 1. On reçoit les filtres depuis le contrôleur
-    public function __construct($search, $status, $payment)
+    // On reçoit soit une liste d'IDs (sélection), soit les filtres actuels
+    public function __construct($ids = null, $filters = [])
     {
-        $this->search = $search;
-        $this->status = $status;
-        $this->payment = $payment;
+        $this->ids = $ids;
+        $this->filters = $filters;
     }
 
-    /**
-    * 2. On construit la requête avec les filtres
-    */
-    public function collection()
+    public function query()
     {
-        $query = Booking::with(['user', 'vehicle']);
+        // 1. Si on a sélectionné des cases manuellement, on exporte juste ça
+        if (!empty($this->ids)) {
+            return Booking::query()->whereIn('id', $this->ids)->with(['user', 'vehicle']);
+        }
 
-        // Filtre Recherche (Copie de ta logique Livewire)
-        if ($this->search) {
-            $query->where(function($q) {
-                $q->whereHas('user', function($u) {
-                    $u->where('name', 'like', '%'.$this->search.'%')
-                      ->orWhere('email', 'like', '%'.$this->search.'%');
+        // 2. Sinon, on reprend EXACTEMENT la logique de filtrage du tableau
+        $query = Booking::query()->with(['user', 'vehicle']);
+
+        if (!empty($this->filters['search'])) {
+            $search = $this->filters['search'];
+            $query->where(function($q) use ($search) {
+                $q->whereHas('user', function($u) use ($search) {
+                    $u->where('name', 'like', '%'.$search.'%')
+                      ->orWhere('email', 'like', '%'.$search.'%');
                 })
-                ->orWhereHas('vehicle', function($v) {
-                    $v->where('name', 'like', '%'.$this->search.'%')
-                      ->orWhere('brand', 'like', '%'.$this->search.'%');
+                ->orWhereHas('vehicle', function($v) use ($search) {
+                    $v->where('name', 'like', '%'.$search.'%')
+                      ->orWhere('brand', 'like', '%'.$search.'%');
                 })
-                ->orWhere('id', 'like', '%'.$this->search.'%');
+                ->orWhere('id', 'like', '%'.$search.'%');
             });
         }
 
-        // Filtre Statut
-        if ($this->status) {
-            $query->where('status', $this->status);
+        if (!empty($this->filters['status'])) {
+            $query->where('status', $this->filters['status']);
         }
 
-        // Filtre Paiement
-        if ($this->payment) {
-            $query->where('payment_status', $this->payment);
+        if (!empty($this->filters['payment'])) {
+            $query->where('payment_status', $this->filters['payment']);
         }
 
-        return $query->latest()->get();
+        // Filtres Dates
+        if (!empty($this->filters['date_start'])) {
+            $query->whereDate('start_date', '>=', $this->filters['date_start']);
+        }
+        if (!empty($this->filters['date_end'])) {
+            $query->whereDate('end_date', '<=', $this->filters['date_end']);
+        }
+
+        return $query->latest();
     }
 
     public function map($booking): array
@@ -67,9 +74,9 @@ class BookingsExport implements FromCollection, WithHeadings, WithMapping, Shoul
             $booking->user->name,
             $booking->user->client_type,
             $booking->vehicle->brand . ' ' . $booking->vehicle->name,
-            number_format($booking->vehicle->daily_price, 0, ',', ' '),
+            $booking->vehicle->daily_price,
             $booking->start_date . ' au ' . $booking->end_date,
-            number_format($booking->total_price, 0, ',', ' '),
+            $booking->total_price,
             $booking->status,
             $booking->payment_status,
         ];
@@ -77,24 +84,11 @@ class BookingsExport implements FromCollection, WithHeadings, WithMapping, Shoul
 
     public function headings(): array
     {
-        return [
-            'ID',
-            'Date Commande',
-            'Client',
-            'Type Client',
-            'Véhicule',
-            'Prix/Jour',
-            'Période',
-            'Total (FCFA)',
-            'Statut',
-            'Paiement',
-        ];
+        return ['ID', 'Date Commande', 'Client', 'Type', 'Véhicule', 'Prix/J', 'Période', 'Total(FCFA)', 'Statut', 'Paiement'];
     }
 
     public function styles(Worksheet $sheet)
     {
-        return [
-            1 => ['font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']], 'fill' => ['fillType' => 'solid', 'startColor' => ['argb' => 'FF1E3A8A']]], // En-tête bleu, texte blanc
-        ];
+        return [1 => ['font' => ['bold' => true]]];
     }
 }

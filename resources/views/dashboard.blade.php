@@ -1,5 +1,11 @@
 <x-app-layout>
-    <div class="py-12 bg-gray-100 min-h-screen" x-data="{ activeTab: 'analytics' }">
+   <!-- AVANT : <div class="py-12..." x-data="{ activeTab: 'analytics' }"> -->
+
+<!-- APRÈS : On lit la mémoire, et on surveille les changements -->
+<div class="py-12 bg-gray-100 min-h-screen"
+     x-data="{ activeTab: localStorage.getItem('currentTab') || 'analytics' }"
+     x-init="$watch('activeTab', val => localStorage.setItem('currentTab', val))">
+
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <!-- EN-TÊTE -->

@@ -275,18 +275,70 @@
                                     </div>
                                 </div>
 
-                                <!-- 4. DATES -->
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Départ</label>
-                                        <input type="date" wire:model.live="startDate" class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg py-2 px-3 focus:border-blue-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Retour</label>
-                                        <input type="date" wire:model.live="endDate" class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg py-2 px-3 focus:border-blue-500">
-                                    </div>
-                                </div>
+                               <!-- 3. DATES (CALENDRIER ROBUSTE) -->
+<div class="space-y-3">
+    <div class="grid grid-cols-2 gap-3">
 
+        <!-- CHAMP DÉPART -->
+        <div class="group">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Départ</label>
+
+            <!-- wire:ignore empêche Livewire de casser le calendrier au rafraîchissement -->
+            <div wire:ignore>
+                <input type="text"
+                       id="startDatePicker"
+                       class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg py-2 px-3 focus:border-blue-500 placeholder-slate-500"
+                       placeholder="Sélectionner date"
+                       x-data
+                       x-init="
+                           flatpickr($el, {
+                               dateFormat: 'Y-m-d',
+                               altInput: true,
+                               altFormat: 'j F Y',
+                               minDate: 'today',
+                               disable: @js($bookedDates), // On injecte les dates occupées ici
+                               theme: 'dark',
+                               onChange: function(selectedDates, dateStr) {
+                                   // On force la mise à jour de la variable Livewire
+                                   @this.set('startDate', dateStr);
+                               }
+                           });
+                       ">
+            </div>
+
+            <!-- L'erreur s'affiche en dehors du wire:ignore pour pouvoir se mettre à jour -->
+            @error('startDate') <span class="text-red-400 text-[10px] block mt-1">{{ $message }}</span> @enderror
+        </div>
+
+        <!-- CHAMP RETOUR -->
+        <div class="group">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1 ml-1">Retour</label>
+
+            <div wire:ignore>
+                <input type="text"
+                       id="endDatePicker"
+                       class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-lg py-2 px-3 focus:border-blue-500 placeholder-slate-500"
+                       placeholder="Sélectionner date"
+                       x-data
+                       x-init="
+                           flatpickr($el, {
+                               dateFormat: 'Y-m-d',
+                               altInput: true,
+                               altFormat: 'j F Y',
+                               minDate: 'today',
+                               disable: @js($bookedDates),
+                               theme: 'dark',
+                               onChange: function(selectedDates, dateStr) {
+                                   @this.set('endDate', dateStr);
+                               }
+                           });
+                       ">
+            </div>
+
+            @error('endDate') <span class="text-red-400 text-[10px] block mt-1">{{ $message }}</span> @enderror
+        </div>
+    </div>
+</div>
                                 <!-- 5. PRIX CORRIGÉ (Pas de div en trop) -->
                                 @if($totalPrice > 0)
                                 <div class="bg-slate-800/80 rounded-lg p-4 border-l-4 border-blue-500 backdrop-blur-sm mt-4">

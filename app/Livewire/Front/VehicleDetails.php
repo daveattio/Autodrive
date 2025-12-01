@@ -10,6 +10,7 @@ use App\Models\User; // Don't forget to import the User model
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Carbon\CarbonPeriod;
 
 class VehicleDetails extends Component
 {
@@ -28,7 +29,7 @@ class VehicleDetails extends Component
     public $company_name, $company_id;
 
     public $profileLocked = false; // Nouvelle variable
-
+    public $bookedDates = []; // Liste des dates indisponibles
     public function mount($id)
     {
         $this->vehicle = Vehicle::findOrFail($id);
@@ -69,6 +70,20 @@ class VehicleDetails extends Component
                 // NON : C'est un nouveau (ou n'a jamais commandé)
                 $this->profileLocked = false; // On laisse le choix LIBRE
                 $this->client_type = 'particulier'; // On met particulier par défaut, mais il peut changer
+            }
+        }
+        // --- CALCUL DES DATES INDISPONIBLES (Pour le calendrier visuel) ---
+        $bookings = Booking::where('vehicle_id', $this->vehicle->id)
+            ->where('status', '!=', 'annulée')
+            ->whereDate('end_date', '>=', now()) // On ne regarde que le futur
+            ->get();
+
+        foreach ($bookings as $booking) {
+            // On prend chaque jour entre le début et la fin de la résa
+            $period = \Carbon\CarbonPeriod::create($booking->start_date, $booking->end_date);
+            foreach ($period as $date) {
+                // On l'ajoute à la liste noire au format Y-m-d (Compatible MySQL)
+                $this->bookedDates[] = $date->format('Y-m-d');
             }
         }
     }

@@ -19,11 +19,48 @@ class BookingManager extends Component
     public $statusFilter = '';
     public $paymentFilter = '';
 
-    // Remettre à la page 1 quand on filtre
+     // NOUVEAUX FILTRES & SÉLECTION
+    public $dateStart = '';
+    public $dateEnd = '';
+    public $selectedRows = []; // Pour les cases à cocher
+    public $selectAll = false; // Pour "Tout cocher"
+
+    // Reset pagination quand on filtre
     public function updatedSearch() { $this->resetPage(); }
     public function updatedStatusFilter() { $this->resetPage(); }
     public function updatedPaymentFilter() { $this->resetPage(); }
+    public function updatedDateStart() { $this->resetPage(); }
+    public function updatedDateEnd() { $this->resetPage(); }
 
+    // Gestion du "Tout cocher"
+    public function updatedSelectAll($value)
+    {
+        if ($value) {
+            // On prend les ID de la page courante (plus simple pour l'UX)
+            $this->selectedRows = $this->getCurrentPageIds();
+        } else {
+            $this->selectedRows = [];
+        }
+    }
+
+    // EXPORT INTELLIGENT
+    public function export($type = 'all')
+    {
+        if ($type === 'selection' && count($this->selectedRows) > 0) {
+            // 1. Export de la sélection
+            return Excel::download(new BookingsExport($this->selectedRows), 'selection_reservations.xlsx');
+        } else {
+            // 2. Export du filtrage actuel
+            $filters = [
+                'search' => $this->search,
+                'status' => $this->statusFilter,
+                'payment' => $this->paymentFilter,
+                'date_start' => $this->dateStart,
+                'date_end' => $this->dateEnd,
+            ];
+            return Excel::download(new BookingsExport(null, $filters), 'reservations_filtrees.xlsx');
+        }
+    }
     public function updateStatus($bookingId, $status)
     {
         $booking = Booking::find($bookingId);
@@ -78,17 +115,31 @@ class BookingManager extends Component
             $query->where('payment_status', $this->paymentFilter);
         }
 
+       // Filtres Dates (Nouveau)
+        if ($this->dateStart) {
+            $query->whereDate('start_date', '>=', $this->dateStart);
+        }
+        if ($this->dateEnd) {
+            $query->whereDate('end_date', '<=', $this->dateEnd);
+        }
+
+        $bookings = $query->latest()->paginate(10);
+
         return view('livewire.admin.booking-manager', [
-            'bookings' => $query->latest()->paginate(10) // 10 par page
+            'bookings' => $bookings
         ]);
     }
-
-    public function exportExcel(): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function resetFilters()
 {
-    // On passe les variables actuelles ($this->search, etc.) au constructeur de l'export
-    return Excel::download(
-        new BookingsExport($this->search, $this->statusFilter, $this->paymentFilter),
-        'reservations_' . date('d-m-Y') . '.xlsx'
-    );
+    $this->reset(['search', 'statusFilter', 'paymentFilter', 'dateStart', 'dateEnd']);
+    $this->resetPage();
 }
+
+   // Helper pour récupérer les IDs de la page (pour le Select All)
+    private function getCurrentPageIds()
+    {
+        // On réexécute la requête pour avoir les IDs (simplifié)
+        // Note: Dans un vrai gros projet on optimiserait, mais ici c'est ok.
+        return Booking::latest()->paginate(10)->pluck('id')->map(fn($id) => (string) $id)->toArray();
+    }
 }
