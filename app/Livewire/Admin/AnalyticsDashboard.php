@@ -23,12 +23,16 @@ class AnalyticsDashboard extends Component
 
     public function mount()
     {
-        // 1. Les Chiffres Clés
-        $this->totalRevenue = Booking::whereIn('status', ['confirmée', 'terminée'])->sum('total_price');
+         // 1. VRAI REVENU (Argent encaissé uniquement)
+    $this->totalRevenue = Booking::where('payment_status', 'payé')
+        ->where('status', '!=', 'annulée') // On exclut les remboursements
+        ->sum('total_price');
 
-        $this->monthlyRevenue = Booking::whereIn('status', ['confirmée', 'terminée'])
-            ->whereMonth('created_at', now()->month)
-            ->sum('total_price');
+    // 2. Revenu du mois (Encaissé)
+    $this->monthlyRevenue = Booking::where('payment_status', 'payé')
+        ->where('status', '!=', 'annulée')
+        ->whereMonth('created_at', now()->month)
+        ->sum('total_price');
 
         $this->pendingCount = Booking::where('status', 'en_attente')->count();
 

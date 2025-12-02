@@ -68,23 +68,43 @@ class BookingsExport implements FromQuery, WithHeadings, WithMapping, ShouldAuto
 
     public function map($booking): array
     {
+        // LOGIQUE "NOTE" AUTOMATIQUE
+        $note = '';
+        if ($booking->status === 'annulée' && $booking->payment_status === 'payé') {
+            $note = 'À REMBOURSER';
+        } elseif ($booking->payment_status === 'impayé' && $booking->status === 'confirmée') {
+            $note = 'Relance paiement';
+        }
         return [
             $booking->id,
             $booking->created_at->format('d/m/Y'),
+            $booking->start_date . ' au ' . $booking->end_date,
             $booking->user->name,
-            $booking->user->client_type,
+            ucfirst($booking->user->client_type),
             $booking->vehicle->brand . ' ' . $booking->vehicle->name,
             $booking->vehicle->daily_price,
-            $booking->start_date . ' au ' . $booking->end_date,
             $booking->total_price,
             $booking->status,
             $booking->payment_status,
+            $note,
         ];
     }
 
     public function headings(): array
     {
-        return ['ID', 'Date Commande', 'Client', 'Type', 'Véhicule', 'Prix/J', 'Période', 'Total(FCFA)', 'Statut', 'Paiement'];
+        return [
+            'ID',
+            'Date Commande',
+            'Période',
+            'Client',
+            'Type',
+            'Véhicule',
+            'Prix/J',
+            'Total(FCFA)',
+            'Statut',
+            'Paiement',
+            'Note',
+        ];
     }
 
     public function styles(Worksheet $sheet)
