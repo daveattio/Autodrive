@@ -73,7 +73,10 @@ class BookingsExport implements FromQuery, WithHeadings, WithMapping, ShouldAuto
         if ($booking->status === 'annulée' && $booking->payment_status === 'payé') {
             $note = 'À REMBOURSER';
         } elseif ($booking->payment_status === 'impayé' && $booking->status === 'confirmée') {
-            $note = 'Relance paiement';
+            $note = 'Relancer paiement';
+        }
+        elseif ($booking->status === 'annulée' && $booking->payment_status === 'impayé') {
+            $note = 'Non payée';
         }
         return [
             $booking->id,
