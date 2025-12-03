@@ -38,7 +38,7 @@
                 @auth
                 <!-- Actions Dynamiques -->
                 <div class="flex items-center gap-3">
-                    @if(Auth::user()->role === 'admin')
+                    @if(Auth::user()->role === 'admin' || Auth::user()->role === 'super_admin')
                     <a href="{{ route('admin.dashboard') }}"
                         class="bg-gradient-to-r from-red-600 to-red-500 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-red-500/30 hover:shadow-red-500/50 hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

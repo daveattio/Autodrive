@@ -72,4 +72,15 @@ class User extends Authenticatable
             ->map(fn($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+    // Vérifie si l'utilisateur a accès au Dashboard (Manager OU Super Admin)
+public function isAdmin()
+{
+    return in_array($this->role, ['admin', 'super_admin']);
+}
+
+// Vérifie si l'utilisateur est le Grand Patron
+public function isSuperAdmin()
+{
+    return $this->role === 'super_admin';
+}
 }

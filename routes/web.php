@@ -69,10 +69,16 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
 // Route "Dashboard" technique (pour rediriger après login)
 Route::get('/dashboard', function () {
     $user = Auth::user();
-    if ($user !== null && $user->role === 'admin') {
+
+    // VÉRIFICATION CORRIGÉE
+    // On vérifie si le rôle est SOIT admin, SOIT super_admin
+    if ($user && in_array($user->role, ['admin', 'super_admin'])) {
         return redirect()->route('admin.dashboard');
     }
-    return redirect()->route('vehicles.index'); // Redirection vers réservations pour le client
+
+    // Sinon, c'est un client
+    return redirect()->route('vehicles.index');
+
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 require __DIR__ . '/auth.php';

@@ -201,8 +201,8 @@
 
                         <!-- Montant (Align Right) -->
                         <td class="px-6 py-4 text-right whitespace-nowrap">
-                            <span class="text-sm font-black text-black-900 block">{{ number_format($booking->total_price, 0, ',', ' ') }}</span>
-                            <span class="text-[10px] text-gray-500 uppercase">FCFA</span>
+                            <span class="text-lg font-black text-black-500 block">{{ number_format($booking->total_price, 0, ',', ' ') }}</span>
+                            <span class="text-[12px] text-gray-500 uppercase">FCFA</span>
                         </td>
 
                         <!-- État (Statut + Paiement regroupés pour gagner de la place) -->

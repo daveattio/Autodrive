@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\ReservationConfirmed; // N'oublie pas l'import !
 use App\Exports\BookingsExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\SecurityLogger; // N'oublie pas l'import
 
 class BookingManager extends Component
 {
@@ -19,18 +20,33 @@ class BookingManager extends Component
     public $statusFilter = '';
     public $paymentFilter = '';
 
-     // NOUVEAUX FILTRES & SÉLECTION
+    // NOUVEAUX FILTRES & SÉLECTION
     public $dateStart = '';
     public $dateEnd = '';
     public $selectedRows = []; // Pour les cases à cocher
     public $selectAll = false; // Pour "Tout cocher"
 
     // Reset pagination quand on filtre
-    public function updatedSearch() { $this->resetPage(); }
-    public function updatedStatusFilter() { $this->resetPage(); }
-    public function updatedPaymentFilter() { $this->resetPage(); }
-    public function updatedDateStart() { $this->resetPage(); }
-    public function updatedDateEnd() { $this->resetPage(); }
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+    public function updatedStatusFilter()
+    {
+        $this->resetPage();
+    }
+    public function updatedPaymentFilter()
+    {
+        $this->resetPage();
+    }
+    public function updatedDateStart()
+    {
+        $this->resetPage();
+    }
+    public function updatedDateEnd()
+    {
+        $this->resetPage();
+    }
 
     // Gestion du "Tout cocher"
     public function updatedSelectAll($value)
@@ -65,7 +81,10 @@ class BookingManager extends Component
     {
         $booking = Booking::find($bookingId);
 
-        if($booking) {
+        if ($booking) {
+
+            $oldStatus = $booking->status; // On garde l'ancien statut pour comparer
+
             // Sécurité paiement (comme vu précédemment)
             if ($status === 'annulée' && $booking->payment_status === 'payé') {
                 session()->flash('warning', 'Attention : Cette réservation était payée. Remboursement manuel requis.');
@@ -77,11 +96,18 @@ class BookingManager extends Component
             if (!session()->has('warning')) {
                 session()->flash('message', 'Statut mis à jour.');
             }
+
+            // --- CAPTEUR DE SÉCURITÉ ---
+            SecurityLogger::record(
+                'modification_reservation',
+                "Réservation #{$booking->id}",
+                "Changement de statut : $oldStatus -> $status"
+            );
             if ($status === 'confirmée') {
-            // On envoie le mail au client
-            Mail::to($booking->user->email)->send(new ReservationConfirmed($booking));
-            session()->flash('message', 'Statut mis à jour et Email de confirmation envoyé !');
-        }
+                // On envoie le mail au client
+                Mail::to($booking->user->email)->send(new ReservationConfirmed($booking));
+                session()->flash('message', 'Statut mis à jour et Email de confirmation envoyé !');
+            }
         }
     }
 
@@ -92,16 +118,16 @@ class BookingManager extends Component
 
         // Filtre Recherche (Nom client, Email, ou Marque voiture)
         if ($this->search) {
-            $query->where(function($q) {
-                $q->whereHas('user', function($u) {
-                    $u->where('name', 'like', '%'.$this->search.'%')
-                      ->orWhere('email', 'like', '%'.$this->search.'%');
+            $query->where(function ($q) {
+                $q->whereHas('user', function ($u) {
+                    $u->where('name', 'like', '%' . $this->search . '%')
+                        ->orWhere('email', 'like', '%' . $this->search . '%');
                 })
-                ->orWhereHas('vehicle', function($v) {
-                    $v->where('name', 'like', '%'.$this->search.'%')
-                      ->orWhere('brand', 'like', '%'.$this->search.'%');
-                })
-                ->orWhere('id', 'like', '%'.$this->search.'%');
+                    ->orWhereHas('vehicle', function ($v) {
+                        $v->where('name', 'like', '%' . $this->search . '%')
+                            ->orWhere('brand', 'like', '%' . $this->search . '%');
+                    })
+                    ->orWhere('id', 'like', '%' . $this->search . '%');
             });
         }
 
@@ -115,7 +141,7 @@ class BookingManager extends Component
             $query->where('payment_status', $this->paymentFilter);
         }
 
-       // Filtres Dates (Nouveau)
+        // Filtres Dates (Nouveau)
         if ($this->dateStart) {
             $query->whereDate('start_date', '>=', $this->dateStart);
         }
@@ -130,12 +156,12 @@ class BookingManager extends Component
         ]);
     }
     public function resetFilters()
-{
-    $this->reset(['search', 'statusFilter', 'paymentFilter', 'dateStart', 'dateEnd']);
-    $this->resetPage();
-}
+    {
+        $this->reset(['search', 'statusFilter', 'paymentFilter', 'dateStart', 'dateEnd']);
+        $this->resetPage();
+    }
 
-   // Helper pour récupérer les IDs de la page (pour le Select All)
+    // Helper pour récupérer les IDs de la page (pour le Select All)
     private function getCurrentPageIds()
     {
         // On réexécute la requête pour avoir les IDs (simplifié)

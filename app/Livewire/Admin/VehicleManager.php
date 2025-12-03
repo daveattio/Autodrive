@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\Vehicle;
 use Livewire\WithFileUploads;
+use App\Services\SecurityLogger;
 
 class VehicleManager extends Component
 {
@@ -81,6 +82,13 @@ class VehicleManager extends Component
 
             $vehicle->update($data);
             session()->flash('message', 'Véhicule modifié avec succès !');
+
+            // --- CAPTEUR ---
+        SecurityLogger::record(
+            'modification_vehicule',
+            "Véhicule {$this->brand} {$this->name}",
+            "Mise à jour des informations (Prix: {$this->daily_price})");
+
         } else {
             // MODE CRÉATION
             // Ici, plus de valeurs par défaut ! On prend ce qu'il y a dans le formulaire.
@@ -97,6 +105,12 @@ class VehicleManager extends Component
                 'is_available' => true
             ]);
             session()->flash('message', 'Véhicule ajouté avec succès !');
+            // --- CAPTEUR ---
+        SecurityLogger::record(
+            'creation_vehicule',
+            "Nouveau véhicule",
+            "Ajout de : {$this->brand} {$this->name}"
+        );
         }
 
         $this->cancelEdit(); // Réinitialiser le formulaire
