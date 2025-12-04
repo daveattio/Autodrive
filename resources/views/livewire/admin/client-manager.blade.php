@@ -10,7 +10,7 @@
         <!-- Stats Rapides -->
         <div class="flex gap-3">
             <div class="bg-blue-50 text-blue-800 px-4 py-2 rounded-lg font-bold border border-blue-200 text-sm flex flex-col items-center">
-                <span class="text-2xl leading-none">{{ \App\Models\User::where('role', '!=', 'admin')->count() }}</span>
+                <span class="text-2xl leading-none">{{ \App\Models\User::whereNotIn('role', ['admin', 'super_admin'])->count() }}</span>
                 <span class="text-[10px] uppercase">Clients</span>
             </div>
             <div class="bg-purple-50 text-purple-800 px-4 py-2 rounded-lg font-bold border border-purple-200 text-sm flex flex-col items-center">
@@ -87,7 +87,7 @@
                     </td>
 
                     <td class="py-3 px-4">
-                        @if($user->role === 'admin')
+                        @if($user->role === 'admin' || $user->role === 'super_admin')
                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />

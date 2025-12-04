@@ -50,7 +50,7 @@
                         <span class="text-white font-bold uppercase text-xs border border-gray-600 px-2 py-1 rounded">
                             {{ $log->action }}
                         </span>
-                        <div class="text-xs text-gray-400 mt-1">{{ $log->target }}</div>
+                        <div class="text-xs text-white-600 mt-1">{{ $log->target }}</div>
                     </td>
                     <td class="px-4 py-3">
                         <p class="text-gray-300 truncate max-w-xs">{{ $log->details }}</p>

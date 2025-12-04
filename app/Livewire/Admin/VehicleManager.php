@@ -108,7 +108,7 @@ class VehicleManager extends Component
             // --- CAPTEUR ---
         SecurityLogger::record(
             'creation_vehicule',
-            "Nouveau véhicule",
+            "Nouveau véhicule #{vehicle->id}",
             "Ajout de : {$this->brand} {$this->name}"
         );
         }
