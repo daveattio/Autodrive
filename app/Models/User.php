@@ -53,11 +53,19 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
+   protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+
+            // --- CHIFFREMENT DES DONNÉES SENSIBLES (PII) ---
+            // Laravel va automatiquement crypter/décrypter ces colonnes
+            'license_number'  => 'encrypted',
+            'passport_number' => 'encrypted',
+            'company_id'      => 'encrypted', // Le NIF est sensible
+            'phone'           => 'encrypted', // Le téléphone aussi souvent
+            'address'         => 'encrypted', // L'adresse physique aussi
         ];
     }
 

@@ -77,14 +77,11 @@ class BookingManager extends Component
             return Excel::download(new BookingsExport(null, $filters), 'reservations_filtrees.xlsx');
         }
     }
-    public function updateStatus($bookingId, $status)
+    public function updateStatus($bookingId, $status): void
     {
         $booking = Booking::find($bookingId);
 
         if ($booking) {
-
-            $oldStatus = $booking->status; // On garde l'ancien statut pour comparer
-
             // Sécurité paiement (comme vu précédemment)
             if ($status === 'annulée' && $booking->payment_status === 'payé') {
                 session()->flash('warning', 'Attention : Cette réservation était payée. Remboursement manuel requis.');
@@ -97,12 +94,6 @@ class BookingManager extends Component
                 session()->flash('message', 'Statut mis à jour.');
             }
 
-            // --- CAPTEUR DE SÉCURITÉ ---
-            SecurityLogger::record(
-                'modification_reservation',
-                "Réservation #{$booking->id}",
-                "Changement de statut : $oldStatus -> $status"
-            );
             if ($status === 'confirmée') {
                 // On envoie le mail au client
                 Mail::to($booking->user->email)->send(new ReservationConfirmed($booking));

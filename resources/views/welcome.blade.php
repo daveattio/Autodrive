@@ -20,100 +20,158 @@
 
 @section('content')
 
-<!-- 1. HERO SECTION (Image de fond) -->
-<div class="relative bg-gray-900 h-[600px] flex items-center">
-    <!-- Image de fond sombre -->
-    <div class="absolute inset-0 overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1485291571150-772bcfc10da5?q=80&w=2000&auto=format&fit=crop"
-             class="w-full h-full object-cover opacity-40"
-             alt="Location voiture Lomé">
+
+
+<!-- STYLE POUR LES ANIMATIONS -->
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+    .animate-fade-up { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+</style>
+
+<!-- 1. HERO SECTION IMMERSIF -->
+<div class="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900">
+
+    <!-- Image de fond avec effet Parallax léger -->
+    <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000&auto=format&fit=crop"
+             class="w-full h-full object-cover opacity-40 scale-105 hover:scale-100 transition-transform duration-[20s] ease-linear">
+        <!-- Dégradé sombre pour la lisibilité -->
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-transparent to-slate-900"></div>
     </div>
 
-    <div class="relative container mx-auto px-4 text-center">
-        <span class="text-blue-400 font-bold tracking-widest uppercase text-sm mb-2 block animate-fade-in-up">Bienvenue chez AutoDrive</span>
-        <h1 class="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
-            Explorez le Togo <br> en toute <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">liberté</span>
+    <div class="relative z-10 container mx-auto px-4 text-center mt-[-50px]">
+
+        <!-- Badge Nouveau -->
+        <div class="inline-block bg-blue-600/20 border border-blue-500/50 backdrop-blur-md rounded-full px-4 py-1.5 mb-6 animate-fade-up">
+            <span class="text-blue-400 text-xs font-bold tracking-[0.2em] uppercase">Nouvelle Flotte 2025 Disponible</span>
+        </div>
+
+        <!-- Titre Géant -->
+        <h1 class="text-5xl md:text-7xl font-black text-white mb-6 leading-tight animate-fade-up delay-100">
+            Prenez le contrôle <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">de votre voyage</span>
         </h1>
-        <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-            La référence de la location de voiture à Lomé. Des véhicules récents, assurés et disponibles 24/7 pour vos séjours professionnels ou touristiques.
+
+        <p class="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-up delay-200">
+            Une expérience de location fluide, sécurisée et sans surprise.
+            Véhicules premium, tarifs transparents et assistance 24/7.
         </p>
-        <div class="flex justify-center gap-4">
-            <a href="{{ route('vehicles.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-bold text-lg transition transform hover:scale-105 shadow-lg shadow-blue-500/30">
-                Choisir un véhicule
+
+        <!-- Boutons d'action -->
+        <div class="flex flex-col md:flex-row justify-center gap-4 animate-fade-up delay-300">
+            <a href="{{ route('vehicles.index') }}" class="group relative px-8 py-4 bg-blue-600 rounded-full text-white font-bold overflow-hidden shadow-lg shadow-blue-600/30 hover:shadow-blue-600/50 transition-all">
+                <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                <span class="relative flex items-center gap-2">
+                    Réserver un véhicule
+                    <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </span>
             </a>
-            <a href="{{ route('contact') }}" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-full font-bold text-lg transition">
-                Nous contacter
+            <a href="{{ route('promotions') }}" class="px-8 py-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-white font-bold hover:bg-white/10 transition flex items-center justify-center gap-2">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                Voir les promotions
             </a>
+        </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/50 animate-bounce">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+    </div>
+</div>
+
+<!-- 2. SECTION FEATURES (Cartes Flottantes) -->
+<div class="py-24 bg-gray-50 relative">
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 -mt-32">
+
+            <!-- Carte 1 -->
+            <div class="bg-white p-8 rounded-3xl shadow-xl hover:-translate-y-2 transition duration-300 animate-float" style="animation-delay: 0s;">
+                <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-6">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Zéro Papier</h3>
+                <p class="text-gray-500 leading-relaxed">Fini la paperasse. Réservez, signez et payez en ligne. Votre contrat est généré instantanément.</p>
+            </div>
+
+            <!-- Carte 2 -->
+            <div class="bg-white p-8 rounded-3xl shadow-xl hover:-translate-y-2 transition duration-300 animate-float" style="animation-delay: 1s;">
+                <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 mb-6">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Sécurité Certifiée</h3>
+                <p class="text-gray-500 leading-relaxed">Données chiffrées, paiements sécurisés. Une infrastructure gérée par des experts certifiés Google.</p>
+            </div>
+
+            <!-- Carte 3 -->
+            <div class="bg-white p-8 rounded-3xl shadow-xl hover:-translate-y-2 transition duration-300 animate-float" style="animation-delay: 2s;">
+                <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 mb-6">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Flexibilité Totale</h3>
+                <p class="text-gray-500 leading-relaxed">Modifiez ou annulez sans frais jusqu'à 48h avant. Nous nous adaptons à votre rythme.</p>
+            </div>
+
         </div>
     </div>
 </div>
 
-<!-- 2. POURQUOI NOUS CHOISIR (Réassurance) -->
+<!-- 3. FLOTTE VEDETTE -->
 <div class="py-20 bg-white">
     <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
-            <div class="p-6">
-                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold mb-3">Prix Transparents</h3>
-                <p class="text-gray-500">Pas de frais cachés. Le prix affiché est le prix payé. Une location de voiture pas chère et honnête.</p>
+        <div class="flex justify-between items-end mb-12">
+            <div>
+                <span class="text-blue-600 font-bold uppercase tracking-widest text-xs">Notre Collection</span>
+                <h2 class="text-3xl md:text-4xl font-black text-gray-900 mt-2">Derniers Arrivages</h2>
             </div>
-            <div class="p-6">
-                <div class="w-16 h-16 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold mb-3">Réservation Facile</h3>
-                <p class="text-gray-500">Réservez en 3 clics. Notre système de location en ligne est optimisé pour vous faire gagner du temps.</p>
-            </div>
-            <div class="p-6">
-                <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold mb-3">Véhicules Premium</h3>
-                <p class="text-gray-500">Une flotte entretenue régulièrement. De la citadine économique au SUV de luxe pour vos voyages.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- 3. VÉHICULES EN VEDETTE (Dynamique) -->
-<div class="py-20 bg-gray-50">
-    <div class="container mx-auto px-4">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-black text-gray-900">Nos Derniers Véhicules</h2>
-            <p class="text-gray-500 mt-2">Découvrez les nouveautés de notre flotte.</p>
+            <a href="{{ route('vehicles.index') }}" class="hidden md:flex items-center gap-2 text-gray-900 font-bold hover:text-blue-600 transition">
+                Tout voir <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+            </a>
         </div>
 
-        <!-- On utilise PHP directement ici pour récupérer 3 voitures -->
-        @php
-            $featuredVehicles = \App\Models\Vehicle::where('is_available', true)->latest()->take(3)->get();
-        @endphp
+        @php $featuredVehicles = \App\Models\Vehicle::where('is_available', true)->latest()->take(3)->get(); @endphp
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @foreach($featuredVehicles as $vehicle)
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden group hover:-translate-y-2 transition duration-300">
-                    <div class="h-48 overflow-hidden relative">
+                <div class="group bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl transition duration-500">
+                    <div class="h-56 overflow-hidden relative">
                         @if($vehicle->image)
-                            <img src="{{ asset('storage/'.$vehicle->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            <img src="{{ asset('storage/'.$vehicle->image) }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                         @else
-                            <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">Photo non disponible</div>
+                            <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">Image non disponible</div>
                         @endif
-                        <div class="absolute top-3 right-3 bg-white px-3 py-1 rounded-full text-xs font-bold shadow">{{ $vehicle->type }}</div>
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition"></div>
                     </div>
                     <div class="p-6">
-                        <h3 class="font-bold text-xl mb-1">{{ $vehicle->brand }} {{ $vehicle->name }}</h3>
-                        <p class="text-blue-600 font-black text-lg mb-4">{{ number_format($vehicle->daily_price, 0, ',', ' ') }} FCFA <span class="text-sm text-gray-400 font-normal">/jour</span></p>
-                        <a href="{{ route('vehicle.show', $vehicle->id) }}" class="block w-full py-3 bg-gray-900 text-white text-center rounded-lg font-bold hover:bg-blue-600 transition">
-                            Voir détails
-                        </a>
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="text-xs text-blue-600 font-bold uppercase">{{ $vehicle->brand }}</p>
+                                <h3 class="text-xl font-bold text-gray-900">{{ $vehicle->name }}</h3>
+                            </div>
+                            <div class="bg-white px-2 py-1 rounded-md shadow-sm border border-gray-100">
+                                <p class="text-xs font-bold text-gray-900">{{ $vehicle->type }}</p>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-200 my-4 pt-4 flex justify-between items-center">
+                            <p class="text-2xl font-black text-gray-900">{{ number_format($vehicle->daily_price, 0, ',', ' ') }} <span class="text-sm font-normal text-gray-500">FCFA</span></p>
+                            <a href="{{ route('vehicle.show', $vehicle->id) }}" class="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white group-hover:bg-blue-600 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
             @endforeach
-        </div>
-
-        <div class="text-center mt-12">
-            <a href="{{ route('vehicles.index') }}" class="text-blue-600 font-bold hover:underline">Voir toute la flotte →</a>
         </div>
     </div>
 </div>
