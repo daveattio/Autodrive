@@ -48,7 +48,7 @@ class LogLockout
         SecurityLogger::record(
             'ALERTE_BRUTE_FORCE',
             "Compte visé : $finalEmail",
-            "🚨 Rate Limiting activé. IP: " . $request->ip()
+            "Rate Limiting activé. IP: " . $request->ip()
         );
     }
 }

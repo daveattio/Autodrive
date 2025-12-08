@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Ajoutez vos styles personnalisés ci-dessous */
+[x-cloak] {
+    display: none !important;
+}

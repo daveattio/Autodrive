@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Carbon\CarbonPeriod;
+use Livewire\Attributes\Validate;
 
 class VehicleDetails extends Component
 {
@@ -124,6 +125,8 @@ class VehicleDetails extends Component
         }
     }
 
+    // Limite : 3 tentatives en 2 minutes
+    #[Validate(maxAttempts: 3, decaySeconds: 120)]
     public function bookVehicle()
     {
         if (!Auth::check()) {

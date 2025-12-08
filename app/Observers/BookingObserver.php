@@ -79,13 +79,6 @@ class BookingObserver
      */
     public function deleted(Booking $booking)
     {
-        // On récupère qui a fait l'action (si c'est via le site)
-        $actor = Auth::user() ? Auth::user()->name : 'Système/Console';
 
-        SecurityLogger::record(
-            'SUPPRESSION_CRITIQUE',
-            "Réservation #{$booking->id}",
-            "🚨 Réservation supprimée définitivement par $actor. (Client: {$booking->user->name}, Montant: {$booking->total_price})"
-        );
     }
 }

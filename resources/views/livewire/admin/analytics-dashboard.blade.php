@@ -1,197 +1,197 @@
-<div class="space-y-8" wire:poll.30s>
+<div class="space-y-8">
 
-    <!-- 1. KPI CARDS (Grille de 3 colonnes -> 6 Cartes au total) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        <!-- Carte 1 : Chiffre d'Affaires (Noir/Bleu) -->
-        <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg flex items-center justify-between">
-            <div>
-                <div class="text-gray-400 text-xs uppercase tracking-widest mb-1">Revenu Total</div>
-                <div class="text-2xl font-black text-blue-400">{{ number_format($totalRevenue, 0, ',', ' ') }} <span class="text-sm text-gray-500">FCFA</span></div>
-            </div>
-            <div class="p-3 bg-gray-800 rounded-lg text-blue-500">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
+    <!-- EN-TÊTE & FILTRES -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <h2 class="text-xl font-bold text-gray-800">Performance & Statistiques</h2>
+            <p class="text-sm text-gray-500">Analysez l'activité en temps réel.</p>
         </div>
 
-        <!-- Carte 2 : Clients (Vert) -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500 flex items-center justify-between">
-            <div>
-                <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Clients Inscrits</div>
-                <div class="text-3xl font-bold text-gray-800">{{ $totalClients }}</div>
-            </div>
-            <div class="p-3 bg-green-50 rounded-lg text-green-600">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-            </div>
-        </div>
-
-        <!-- Carte 3 : Réservations Totales (Violet) -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-purple-500 flex items-center justify-between">
-            <div>
-                <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Total Réservations</div>
-                <div class="text-3xl font-bold text-gray-800">{{ $totalBookings }}</div>
-            </div>
-            <div class="p-3 bg-purple-50 rounded-lg text-purple-600">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-                </svg>
+        <!-- SELECTEUR PÉRIODE -->
+        <div class="relative">
+            <select wire:model.live="period" class="appearance-none bg-white border border-gray-300 text-gray-700 py-2 pl-4 pr-10 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-sm cursor-pointer">
+                <option value="today">Aujourd'hui</option>
+                <option value="week">Cette Semaine</option>
+                <option value="month">Ce Mois-ci</option>
+                <option value="year">Cette Année</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
         </div>
-
-        <!-- Carte 4 : À Traiter (Rouge/Orange - Urgent) -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-orange-500 flex items-center justify-between">
-            <div>
-                <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">À traiter</div>
-                <div class="text-3xl font-bold text-orange-600">{{ $pendingCount }}</div>
-            </div>
-            <div class="p-3 bg-orange-50 rounded-lg text-orange-600">
-                <svg class="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-        </div>
-
-        <!-- Carte 5 : Flotte (Bleu) -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500 flex items-center justify-between">
-            <div>
-                <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Parc Automobile</div>
-                <div class="text-3xl font-bold text-gray-800">{{ $totalVehicles }}</div>
-            </div>
-            <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                </svg>
-            </div>
-        </div>
-
-        <!-- Carte 6 : Revenu Mois (Teal) -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-teal-500 flex items-center justify-between">
-            <div>
-                <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Revenu du mois</div>
-                <div class="text-3xl font-bold text-gray-800">{{ number_format($monthlyRevenue, 0, ',', ' ') }}</div>
-            </div>
-            <div class="p-3 bg-teal-50 rounded-lg text-teal-600">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                </svg>
-            </div>
-        </div>
-
     </div>
 
-    <!-- 2. PARTIE BASSE (Stats détaillées) -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- 1. KPI CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Chiffre d'Affaires -->
+        <div class="bg-gray-900 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden group">
+            <div class="absolute right-0 top-0 p-4 opacity-10 transform translate-x-2 -translate-y-2 group-hover:scale-110 transition">
+                <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="text-gray-400 text-xs uppercase tracking-widest mb-1">Revenus ({{ ucfirst($period) }})</div>
+            <div class="text-2xl font-black text-blue-400">{{ number_format($revenue, 0, ',', ' ') }} <span class="text-sm text-gray-500">FCFA</span></div>
+        </div>
 
-        <!-- RÉPARTITION CLIENTS -->
-        <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 flex flex-col justify-between h-full">
+        <!-- Réservations -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-orange-500">
+            <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Réservations</div>
+            <div class="text-3xl font-bold text-gray-800">{{ $bookingsCount }}</div>
+        </div>
+
+        <!-- Nouveaux Clients -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500">
+            <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Nouveaux Clients</div>
+            <div class="text-3xl font-bold text-gray-800">{{ $clientsCount }}</div>
+        </div>
+
+        <!-- Flotte -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500">
+            <div class="text-gray-500 text-xs uppercase tracking-widest mb-1">Parc Auto</div>
+            <div class="text-3xl font-bold text-gray-800">{{ $vehiclesCount }}</div>
+        </div>
+    </div>
+
+    <!-- 2. SECTION GRAPHIQUES (Ligne + Camembert) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- A. COURBE (2/3 largeur) -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-md border border-gray-100 flex flex-col">
             <h3 class="font-bold text-gray-800 mb-6 flex items-center gap-2">
-                <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                Types de Clients
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                Évolution Financière & Volume
             </h3>
-
-            <div class="space-y-6">
-
-                <!-- Particuliers (User) -->
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </div>
-                    <div class="flex-grow">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-gray-700">Particuliers</span>
-                            <span class="font-bold text-blue-600">{{ round($clientStats['particulier']) }}%</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-2">
-                            <div class="bg-blue-600 h-2 rounded-full transition-all duration-1000" style="width: {{ $clientStats['particulier'] }}%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Entreprises (Immeuble/Valise) -->
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
-                    </div>
-                    <div class="flex-grow">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-gray-700">Entreprises</span>
-                            <span class="font-bold text-purple-600">{{ round($clientStats['entreprise']) }}%</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-2">
-                            <div class="bg-purple-600 h-2 rounded-full transition-all duration-1000" style="width: {{ $clientStats['entreprise'] }}%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Touristes (Avion/Monde) -->
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="flex-grow">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-gray-700">Touristes</span>
-                            <span class="font-bold text-orange-500">{{ round($clientStats['touriste']) }}%</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-2">
-                            <div class="bg-orange-500 h-2 rounded-full transition-all duration-1000" style="width: {{ $clientStats['touriste'] }}%"></div>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="relative w-full h-72" wire:ignore>
+                <canvas id="revenueChart"></canvas>
             </div>
         </div>
 
-        <!-- TOP VÉHICULES -->
-        <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
-            <h3 class="font-bold text-gray-800 mb-6 flex items-center gap-2">
-                <svg class="w-5 h-5 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-                Les Stars du Parc
+        <!-- B. CAMEMBERT (1/3 largeur) -->
+        <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 flex flex-col items-center justify-center">
+            <h3 class="font-bold text-gray-800 mb-6 w-full flex items-center gap-2">
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+                Répartition Clients ({{ ucfirst($period) }})
             </h3>
+            <div class="relative w-full h-64" wire:ignore>
+                <canvas id="clientPieChart"></canvas>
+            </div>
+        </div>
+    </div>
 
-            <div class="space-y-4">
-                @forelse($topVehicles as $index => $stat)
-                <div class="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition border border-transparent hover:border-gray-100">
+    <!-- 3. TOP VÉHICULES (Horizontal en bas) -->
+    <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100">
+        <h3 class="font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+            Top Performances ({{ ucfirst($period) }})
+        </h3>
+
+        <!-- Grille Horizontale -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @forelse($topVehicles as $index => $stat)
+                @if($stat->vehicle)
+                <div class="group flex items-center gap-4 p-4 bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-200 rounded-xl transition duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-1">
+
                     <!-- Rang -->
-                    <div class="text-xl font-black text-gray-200">#{{ $index + 1 }}</div>
+                    <div class="text-2xl font-black text-gray-300 w-8">#{{ $index + 1 }}</div>
 
-                    <!-- Image -->
-                    <div class="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden shrink-0">
-                        @if($stat->vehicle && $stat->vehicle->image)
-                        <img src="{{ asset('storage/'.$stat->vehicle->image) }}" class="w-full h-full object-cover">
+                    <!-- Image avec Zoom -->
+                    <div class="w-16 h-16 rounded-lg overflow-hidden border border-white shadow-md relative shrink-0">
+                        @if($stat->vehicle->image)
+                            <img src="{{ asset('storage/'.$stat->vehicle->image) }}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
+                        @else
+                            <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-xs">No Img</div>
                         @endif
                     </div>
 
-                    <!-- Info -->
-                    <div class="flex-grow">
-                        <h4 class="font-bold text-gray-900 text-sm">{{ $stat->vehicle->brand ?? 'Inconnu' }} {{ $stat->vehicle->name ?? '' }}</h4>
-                        <p class="text-xs text-gray-500">{{ $stat->vehicle->type ?? '' }}</p>
+                    <!-- Infos -->
+                    <div class="flex-grow min-w-0">
+                        <h4 class="font-bold text-gray-900 text-sm truncate group-hover:text-blue-700">{{ $stat->vehicle->brand }} {{ $stat->vehicle->name }}</h4>
+                        <span class="text-[10px] uppercase font-bold text-gray-500 bg-white px-2 py-0.5 rounded shadow-sm">{{ $stat->vehicle->type }}</span>
                     </div>
 
                     <!-- Score -->
-                    <div class="text-right">
-                        <span class="block font-black text-xl text-blue-600">{{ $stat->total }}</span>
-                        <span class="text-[10px] text-gray-400 uppercase font-bold">Locations</span>
+                    <div class="text-right pl-2 border-l border-gray-200">
+                        <span class="block font-black text-2xl text-blue-600 leading-none">{{ $stat->total }}</span>
+                        <span class="text-[9px] text-gray-400 uppercase font-bold tracking-wider">Loc.</span>
                     </div>
                 </div>
-                @empty
-                <div class="text-center text-gray-400 py-10">Pas encore assez de données</div>
-                @endforelse
-            </div>
+                @endif
+            @empty
+                <div class="col-span-3 text-center text-gray-400 py-4 italic text-sm bg-gray-50 rounded-lg">Aucune location sur cette période.</div>
+            @endforelse
         </div>
     </div>
+
+    <!-- SCRIPT CHART.JS (LE COEUR DU SYSTÈME) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+
+            // --- 1. INITIALISATION LIGNE (Revenue) ---
+            const ctxLine = document.getElementById('revenueChart').getContext('2d');
+            let revenueChart = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: @json($chartLabels),
+                    datasets: [
+                        {
+                            label: 'Chiffre d\'Affaires (FCFA)',
+                            data: @json($chartRevenue),
+                            borderColor: '#2563eb', // Bleu
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            borderWidth: 3, tension: 0.4, fill: true, yAxisID: 'y'
+                        },
+                        {
+                            label: 'Réservations',
+                            data: @json($chartBookings),
+                            borderColor: '#f97316', // Orange
+                            backgroundColor: 'transparent',
+                            borderWidth: 2, borderDash: [5, 5], tension: 0.4, yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: { type: 'linear', display: true, position: 'left', beginAtZero: true },
+                        y1: { type: 'linear', display: true, position: 'right', beginAtZero: true, grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+
+            // --- 2. INITIALISATION CAMEMBERT (Clients) ---
+            const ctxPie = document.getElementById('clientPieChart').getContext('2d');
+            let clientPieChart = new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: @json($pieLabels),
+                    datasets: [{
+                        data: @json($pieData),
+                        backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b'], // Bleu, Violet, Orange
+                        borderWidth: 0, hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // --- 3. MISE À JOUR LIVEWIRE ---
+            Livewire.on('update-charts', (data) => {
+                const newData = data[0];
+
+                // Mise à jour Ligne
+                revenueChart.data.labels = newData.line.labels;
+                revenueChart.data.datasets[0].data = newData.line.revenue;
+                revenueChart.data.datasets[1].data = newData.line.bookings;
+                revenueChart.update();
+
+                // Mise à jour Camembert
+                clientPieChart.data.labels = newData.pie.labels;
+                clientPieChart.data.datasets[0].data = newData.pie.data;
+                clientPieChart.update();
+            });
+        });
+    </script>
 </div>

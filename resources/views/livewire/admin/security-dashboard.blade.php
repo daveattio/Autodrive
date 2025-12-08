@@ -121,78 +121,88 @@
                     </td>
 
                     <!-- Colonne 2 : Acteur & Rôle (Avec Stickers) -->
-<td class="px-6 py-4 align-top">
-    <div class="flex items-center gap-3">
+                    <td class="px-6 py-4 align-top">
+                        <div class="flex items-center gap-3">
 
-        <!-- 1. LE STICKER (AVATAR) -->
-        @if($log->user)
-            <!-- CAS : UTILISATEUR CONNECTÉ -->
-            @if($log->user_role === 'super_admin')
-                <!-- Sticker SUPER ADMIN (Couronne/Bouclier Doré) -->
-                <div class="w-10 h-10 rounded-xl bg-yellow-900/30 border border-yellow-600/50 flex items-center justify-center text-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                </div>
-            @elseif($log->user_role === 'admin')
-                <!-- Sticker ADMIN (Cravate/Badge Violet) -->
-                <div class="w-10 h-10 rounded-xl bg-purple-900/30 border border-purple-600/50 flex items-center justify-center text-purple-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                </div>
-            @else
-                <!-- Sticker CLIENT (Bonhomme Bleu) -->
-                <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-blue-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                </div>
-            @endif
+                            <!-- 1. LE STICKER (AVATAR) -->
+                            @if($log->user)
+                            <!-- CAS : UTILISATEUR CONNECTÉ -->
+                            @if($log->user_role === 'super_admin')
+                            <!-- Sticker SUPER ADMIN (Couronne/Bouclier Doré) -->
+                            <div class="w-10 h-10 rounded-xl bg-yellow-900/30 border border-yellow-600/50 flex items-center justify-center text-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.2)]">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                            </div>
+                            @elseif($log->user_role === 'admin')
+                            <!-- Sticker ADMIN (Cravate/Badge Violet) -->
+                            <div class="w-10 h-10 rounded-xl bg-purple-900/30 border border-purple-600/50 flex items-center justify-center text-purple-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            @else
+                            <!-- Sticker CLIENT (Bonhomme Bleu) -->
+                            <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-blue-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            @endif
 
-        @else
-            <!-- CAS : NON CONNECTÉ (Invité ou Pirate) -->
-            @if(str_contains($log->action, 'ALERTE') || str_contains($log->action, 'BRUTE'))
-                <!-- Sticker PIRATE (Incognito Rouge/Noir) -->
-                <div class="w-10 h-10 rounded-xl bg-red-950 border border-red-600/50 flex items-center justify-center text-red-500 shadow-[0_0_15px_rgba(220,38,38,0.4)] animate-pulse">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
-                </div>
-            @else
-                <!-- Sticker INVITÉ (Fantôme Gris) -->
-                <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-            @endif
-        @endif
+                            @else
+                            <!-- CAS : NON CONNECTÉ (Invité ou Pirate) -->
+                            @if(str_contains($log->action, 'ALERTE') || str_contains($log->action, 'BRUTE'))
+                            <!-- Sticker PIRATE (Incognito Rouge/Noir) -->
+                            <div class="w-10 h-10 rounded-xl bg-red-950 border border-red-600/50 flex items-center justify-center text-red-500 shadow-[0_0_15px_rgba(220,38,38,0.4)] animate-pulse">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path>
+                                </svg>
+                            </div>
+                            @else
+                            <!-- Sticker INVITÉ (Fantôme Gris) -->
+                            <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            @endif
+                            @endif
 
-        <!-- 2. LE TEXTE (Nom & Rôle) -->
-        <div>
-            @if($log->user)
-                <div class="text-slate-200 font-bold text-sm">{{ $log->user->name }}</div>
+                            <!-- 2. LE TEXTE (Nom & Rôle) -->
+                            <div>
+                                @if($log->user)
+                                <div class="text-slate-200 font-bold text-sm">{{ $log->user->name }}</div>
 
-                <!-- Badge Rôle Coloré -->
-                @php
-                    $roleConfig = match($log->user_role) {
-                        'super_admin' => ['text' => 'Super Admin', 'class' => 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10'],
-                        'admin'       => ['text' => 'Admin', 'class' => 'text-purple-400 border-purple-500/30 bg-purple-500/10'],
-                        'client'      => ['text' => 'Client', 'class' => 'text-blue-400 border-blue-500/30 bg-blue-500/10'],
-                        default       => ['text' => 'Utilisateur', 'class' => 'text-slate-400 border-slate-500/30 bg-slate-500/10']
-                    };
-                @endphp
-                <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border {{ $roleConfig['class'] }}">
-                    {{ $roleConfig['text'] }}
-                </span>
-            @else
-                <!-- Texte pour Invité / Pirate -->
-                @if(str_contains($log->action, 'ALERTE'))
-                    <div class="text-red-500 font-bold text-sm uppercase tracking-wider">SUSPECT</div>
-                    <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border border-red-500/30 bg-red-500/10 text-red-400">
-                        Intrus non identifié
-                    </span>
-                @else
-                    <div class="text-slate-500 font-bold text-sm">Visiteur</div>
-                    <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border border-slate-700 bg-slate-800 text-slate-500">
-                        Invité
-                    </span>
-                @endif
-            @endif
-        </div>
-    </div>
-</td>
+                                <!-- Badge Rôle Coloré -->
+                                @php
+                                $roleConfig = match($log->user_role) {
+                                'super_admin' => ['text' => 'Super Admin', 'class' => 'text-yellow-400 border-yellow-500/30 bg-yellow-500/10'],
+                                'admin' => ['text' => 'Admin', 'class' => 'text-purple-400 border-purple-500/30 bg-purple-500/10'],
+                                'client' => ['text' => 'Client', 'class' => 'text-blue-400 border-blue-500/30 bg-blue-500/10'],
+                                default => ['text' => 'Utilisateur', 'class' => 'text-slate-400 border-slate-500/30 bg-slate-500/10']
+                                };
+                                @endphp
+                                <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border {{ $roleConfig['class'] }}">
+                                    {{ $roleConfig['text'] }}
+                                </span>
+                                @else
+                                <!-- Texte pour Invité / Pirate -->
+                                @if(str_contains($log->action, 'ALERTE'))
+                                <div class="text-red-500 font-bold text-sm uppercase tracking-wider">SUSPECT</div>
+                                <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border border-red-500/30 bg-red-500/10 text-red-400">
+                                    Intrus non identifié
+                                </span>
+                                @else
+                                <div class="text-slate-500 font-bold text-sm">Visiteur</div>
+                                <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold border border-slate-700 bg-slate-800 text-slate-500">
+                                    Invité
+                                </span>
+                                @endif
+                                @endif
+                            </div>
+                        </div>
+                    </td>
                     <!-- Colonne 3 : Action (Badges Néons) -->
                     <td class="px-6 py-4 align-top">
                         @php
@@ -205,7 +215,7 @@
                         <span class="inline-block px-3 py-1 rounded-md text-[10px] font-bold border {{ $badgeClass }}">
                             {{ $log->action }}
                         </span>
-                        <div class="text-[12px] text-slate-500 mt-2 font-mono">Target: {{ $log->target }}</div>
+                        <div class="text-[12px] text-slate-500 mt-2 font-mono">{{ $log->target }}</div>
                     </td>
 
                     <!-- Colonne 4 : Détails -->
@@ -213,6 +223,14 @@
                         <div class="text-slate-300 text-xs leading-relaxed bg-slate-900/50 p-2 rounded border border-slate-800/50">
                             {{ $log->details }}
                         </div>
+                        <span class="text-xs text-gray-400 font-mono">
+                            <!-- Affiche une icône selon le device -->
+                            @if(Str::contains($log->formatted_agent, ['iPhone', 'Android'])) 📱
+                            @else 💻
+                            @endif
+                            {{ $log->formatted_agent }}
+                        </span>
+                        <!-- Tu peux garder le raw user_agent dans un tooltip au survol pour les détails techniques -->
                         <div class="text-[10px] text-slate-600 mt-1 truncate max-w-xs font-mono opacity-60" title="{{ $log->user_agent }}">
                             UA: {{ $log->user_agent }}
                         </div>

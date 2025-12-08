@@ -36,7 +36,7 @@ class VehicleObserver
         SecurityLogger::record(
             'SUPPRESSION_VEHICULE',
             "Véhicule {$vehicle->brand} {$vehicle->name} (ID: {$vehicle->id})",
-            "⚠️ Véhicule supprimé définitivement de la flotte par " . (Auth::user()->name ?? 'Inconnu')
+            "⚠️ Véhicule supprimé définitivement par " . (Auth::user()->name ?? 'Inconnu')
         );
     }
 }
