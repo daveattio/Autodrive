@@ -4,16 +4,23 @@
     <!-- APRÈS : On lit la mémoire, et on surveille les changements -->
     <div class="py-12 bg-gray-100 min-h-screen"
         x-data="{ activeTab: localStorage.getItem('currentTab') || 'analytics' }"
-        x-init="$watch('activeTab', val => localStorage.setItem('currentTab', val))">
+        x-init="$watch('activeTab', val => localStorage.setItem('currentTab', val))"
+        x-cloak>
 
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <!-- w-full pour prendre toute la largeur, px-4 pour ne pas coller aux bords -->
+        <div class="w-full px-4 sm:px-6 lg:px-8">
 
-            <!-- EN-TÊTE -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <h1 class="text-3xl font-black text-gray-800 tracking-tight">
-                    Administration <span class="text-blue-600">AutoDrive</span>
-                </h1>
+            <!-- EN-TÊTE DASHBOARD -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pt-6">
 
+                <div class="flex items-center gap-4">
+
+                    <div class="h-6 w-px bg-gray-300 mx-2 hidden md:block"></div>
+
+                    <h2 class="text-xl font-bold text-gray-500 hidden md:block">Administration</h2>
+                </div>
+
+                <!-- Bouton Retour Site -->
                 <a href="{{ url('/') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 hover:text-blue-600 text-sm font-bold rounded-lg shadow-sm border border-gray-200 transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -22,7 +29,7 @@
                 </a>
             </div>
             @php
-            $gridCols = Auth::user()->role === 'super_admin' ? 'md:grid-cols-6' : 'md:grid-cols-4';
+            $gridCols = Auth::user()->role === 'super_admin' ? 'md:grid-cols-7' : 'md:grid-cols-5';
             @endphp
             <!-- BARRE DE NAVIGATION (TABS PLEINE LARGEUR) -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-1.5 mb-8 sticky top-4 z-30">
@@ -65,8 +72,21 @@
                         </svg>
                         Véhicules
                     </button>
+                    <!-- 4. MAINTENANCE -->
 
-                    <!-- 4. PROMOTIONS -->
+                    <button @click="activeTab = 'maintenance'"
+                        :class="activeTab === 'maintenance' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'"
+                        class="px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2">
+                        <!-- Icône Clé à molette -->
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Maintenance
+                    </button>
+
+
+                    <!-- 5. PROMOTIONS -->
                     <button @click="activeTab = 'promos'"
                         :class="activeTab === 'promos' ? 'bg-gray-900 text-white shadow' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
                         class="px-4 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 w-full">
@@ -76,7 +96,7 @@
                         Promotions
                     </button>
 
-                    <!-- 5. CLIENTS -->
+                    <!-- 6. CLIENTS -->
                     <button @click="activeTab = 'clients'"
                         :class="activeTab === 'clients' ? 'bg-gray-900 text-white shadow' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
                         class="px-4 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 w-full">
@@ -84,6 +104,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         Clients
+                        <!-- Le badge est intégré proprement -->
+                        <div class="absolute top-2 right-2 md:relative md:top-0 md:right-0">
+                            <livewire:admin.kyc-badge />
+                        </div>
                     </button>
                     <!-- Bouton SÉCURITÉ -->
                     @if(Auth::user()->role === 'super_admin')
@@ -107,25 +131,31 @@
                 </div>
                 @endif
                 <div x-show="activeTab === 'bookings'" x-cloak x-transition.opacity.duration.300ms>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg  border-t-4 border-green-500">
                         <livewire:admin.booking-manager />
                     </div>
                 </div>
 
                 <div x-show="activeTab === 'vehicles'" x-cloak x-transition.opacity.duration.300ms>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg  border-t-4 border-gray-500">
                         <livewire:admin.vehicle-manager />
                     </div>
                 </div>
 
+                <div x-show="activeTab === 'maintenance'" x-cloak x-transition.opacity.duration.300ms>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border-t-4 border-orange-500">
+                        <livewire:admin.maintenance-manager />
+                    </div>
+                </div>
+
                 <div x-show="activeTab === 'promos'" x-cloak x-transition.opacity.duration.300ms>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg  border-t-4 border-red-500">
                         <livewire:admin.promotion-manager />
                     </div>
                 </div>
 
                 <div x-show="activeTab === 'clients'" x-cloak x-transition.opacity.duration.300ms>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg  border-t-4 border-blue-500">
                         <livewire:admin.client-manager />
                     </div>
                 </div>

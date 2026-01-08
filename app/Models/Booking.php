@@ -16,7 +16,14 @@ class Booking extends Model
         'start_date',
         'end_date',
         'total_price',
-        'status'
+        'status',
+       'payment_status',  // impayé, en_attente_validation, payé
+
+    // NOUVEAUX CHAMPS
+    'payment_method',
+    'transaction_ref',
+    'payment_proof_path',
+    'paid_at'   // Le chemin de la photo de la preuve
     ];
 
     // Optionnel : Pour dire que la réservation "appartient" à un véhicule

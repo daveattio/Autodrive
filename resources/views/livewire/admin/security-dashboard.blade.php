@@ -229,7 +229,7 @@
                             @else 💻
                             @endif
                             {{ $log->formatted_agent }}
-                        </span>
+                            </span>
                         <!-- Tu peux garder le raw user_agent dans un tooltip au survol pour les détails techniques -->
                         <div class="text-[10px] text-slate-600 mt-1 truncate max-w-xs font-mono opacity-60" title="{{ $log->user_agent }}">
                             UA: {{ $log->user_agent }}

@@ -63,7 +63,7 @@ class BookingsExport implements FromQuery, WithHeadings, WithMapping, ShouldAuto
             $query->whereDate('end_date', '<=', $this->filters['date_end']);
         }
 
-        return $query->latest();
+        return $query->orderBy('id', 'desc');
     }
 
     public function map($booking): array
@@ -73,7 +73,7 @@ class BookingsExport implements FromQuery, WithHeadings, WithMapping, ShouldAuto
         if ($booking->status === 'annulée' && $booking->payment_status === 'payé') {
             $note = 'À REMBOURSER';
         } elseif ($booking->payment_status === 'impayé' && $booking->status === 'confirmée') {
-            $note = 'Relancer paiement';
+            $note = 'Relancer le paiement';
         }
         elseif ($booking->status === 'annulée' && $booking->payment_status === 'impayé') {
             $note = 'Non payée';
@@ -81,10 +81,10 @@ class BookingsExport implements FromQuery, WithHeadings, WithMapping, ShouldAuto
         return [
             $booking->id,
             $booking->created_at->format('d/m/Y'),
-            $booking->start_date . ' au ' . $booking->end_date,
+            $booking->start_date . ' - ' . $booking->end_date,
+            $booking->vehicle->brand . ' ' . $booking->vehicle->name,
             $booking->user->name,
             ucfirst($booking->user->client_type),
-            $booking->vehicle->brand . ' ' . $booking->vehicle->name,
             $booking->vehicle->daily_price,
             $booking->total_price,
             $booking->status,
@@ -96,12 +96,12 @@ class BookingsExport implements FromQuery, WithHeadings, WithMapping, ShouldAuto
     public function headings(): array
     {
         return [
-            'ID',
+            'ID Commande',
             'Date Commande',
             'Période',
+            'Véhicule',
             'Client',
             'Type',
-            'Véhicule',
             'Prix/J',
             'Total(FCFA)',
             'Statut',

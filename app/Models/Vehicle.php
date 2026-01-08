@@ -25,4 +25,10 @@ class Vehicle extends Model
 {
     return $this->hasMany(Promotion::class);
 }
+
+// --- AJOUTE CETTE FONCTION ---
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

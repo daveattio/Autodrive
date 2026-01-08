@@ -16,20 +16,20 @@ return new class extends Migration
             $table->string('client_type')->default('particulier'); // particulier, entreprise, touriste
 
             // Infos communes
-            $table->string('phone')->nullable();
-            $table->string('address')->nullable();
+            $table->text('phone')->nullable();
+            $table->text('address')->nullable();
             $table->string('city')->nullable();
 
             // Spécifique Particulier / Touriste
-            $table->string('license_number')->nullable(); // N° Permis
+            $table->text('license_number')->nullable(); // N° Permis
 
             // Spécifique Touriste
-            $table->string('passport_number')->nullable();
-            $table->string('origin_country')->nullable();
+            $table->text('passport_number')->nullable();
+            $table->text('origin_country')->nullable();
 
             // Spécifique Entreprise
-            $table->string('company_name')->nullable();
-            $table->string('company_id')->nullable(); // NIF ou RCCM
+            $table->text('company_name')->nullable();
+            $table->text('company_id')->nullable(); // NIF ou RCCM
         });
     }
 

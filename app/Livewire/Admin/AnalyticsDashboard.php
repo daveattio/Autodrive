@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 class AnalyticsDashboard extends Component
 {
-    public $period = 'year';
+    public $period = 'today';
 
     // KPI
     public $revenue = 0;
@@ -26,6 +26,7 @@ class AnalyticsDashboard extends Component
     public $chartLabels = [];
     public $chartRevenue = [];
     public $chartBookings = [];
+    public $chartMaintenance = []; // NOUVEAU
 
     public $pieLabels = [];
     public $pieData = [];
@@ -45,6 +46,7 @@ class AnalyticsDashboard extends Component
                 'labels' => $this->chartLabels,
                 'revenue' => $this->chartRevenue,
                 'bookings' => $this->chartBookings,
+                'maintenance' => $this->chartMaintenance, // NOUVEAU
             ],
             'pie' => [
                 'labels' => $this->pieLabels,
@@ -78,19 +80,32 @@ class AnalyticsDashboard extends Component
                 break;
         }
 
-        // 2. KPI Globaux (Identique à avant)
+        // 2. KPI Globaux (Filtrés par date ET par rôle Client)
         $this->revenue = Booking::where('payment_status', 'payé')
             ->where('status', '!=', 'annulée')
-            ->whereBetween('created_at', [$startDate, $endDate])->sum('total_price');
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereHas('user', function ($q) {       // <--- AJOUTE CECI
+                $q->where('role', 'client');        // On exclut les admins
+            })
+            ->sum('total_price');
 
-        $this->bookingsCount = Booking::whereBetween('created_at', [$startDate, $endDate])->count();
+        $this->bookingsCount = Booking::whereBetween('created_at', [$startDate, $endDate])
+            ->whereHas('user', function ($q) {       // <--- AJOUTE CECI
+                $q->where('role', 'client');
+            })
+            ->count();
 
-        $this->clientsCount = User::where('role', 'client')
-            ->whereBetween('created_at', [$startDate, $endDate])->count();
+        $this->clientsCount = User::where('role', 'client') // C'était déjà bon ici
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
 
-        // 3. Top Véhicules (Identique à avant)
+        // CORRECTION 1 : Parc Auto (Véhicules ajoutés sur la période)
+        $this->vehiclesCount = Vehicle::whereBetween('created_at', [$startDate, $endDate])->count();
+
+        // 3. TOP VÉHICULES (Identique)
         $this->topVehicles = Booking::select('vehicle_id', DB::raw('count(*) as total'))
             ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereHas('user', fn($q) => $q->where('role', 'client')) // Exclure admin
             ->where('status', '!=', 'annulée')
             ->groupBy('vehicle_id')
             ->orderByDesc('total')
@@ -101,76 +116,87 @@ class AnalyticsDashboard extends Component
         // 4. DONNÉES GRAPHIQUES (NOUVELLE LOGIQUE "REMPLISSAGE DE TROUS")
         $this->generateChartData($startDate, $endDate);
 
-        // 5. Données Camembert (Identique à avant)
+        // 5. CAMEMBERT (CORRECTION 2 : Clients UNIQUES)
+        // On compte les ID distincts pour ne pas compter 2 fois la même entreprise
         $pieStats = Booking::join('users', 'bookings.user_id', '=', 'users.id')
-            ->select('users.client_type', DB::raw('count(*) as total'))
+            ->select('users.client_type', DB::raw('count(DISTINCT users.id) as total')) // <--- DISTINCT ICI
             ->whereBetween('bookings.created_at', [$startDate, $endDate])
+            ->where('users.role', 'client') // Exclure admin
             ->groupBy('users.client_type')
             ->get();
 
         $this->pieLabels = [];
         $this->pieData = [];
-        foreach($pieStats as $stat) {
+
+        foreach ($pieStats as $stat) {
             $this->pieLabels[] = ucfirst($stat->client_type);
             $this->pieData[] = $stat->total;
         }
     }
 
     // --- NOUVELLE FONCTION INTELLIGENTE ---
-    private function generateChartData($start, $end)
+    private function generateChartData($start, $end): void
     {
         $this->chartLabels = [];
         $this->chartRevenue = [];
         $this->chartBookings = [];
+        $this->chartMaintenance = [];
 
-        // On récupère TOUTES les données brutes sur la période
+        // Données brutes filtrées (sans admin, payées pour le revenu)
         $rawData = Booking::whereBetween('created_at', [$start, $end])
-            ->where('payment_status', 'payé')
-            ->where('status', '!=', 'annulée')
+            ->whereHas('user', fn($q) => $q->where('role', 'client'))
             ->get();
 
-        // On génère la ligne du temps selon le filtre
-        if ($this->period == 'year') {
-            // Boucle sur les 12 mois
+
+    // On se base sur la date de début de la maintenance pour l'attribuer au mois/jour
+    $maintenances = \App\Models\Maintenance::whereBetween('start_date', [$start, $end])->get();
+
+        if ($this->period == 'today') {
+            // Boucle HEURE PAR HEURE (0h à 23h)
+            for ($h = 0; $h <= 23; $h++) {
+                $this->chartLabels[] = $h . 'h'; // 0h, 1h, 2h...
+
+                // On filtre précisément sur l'heure H
+                $hourlyData = $rawData->filter(fn($b) => $b->created_at->hour == $h);
+                 $hourlyMaint = $maintenances->filter(fn($m) => $m->start_date->hour == $h);
+
+                $this->chartRevenue[] = $hourlyData->where('payment_status', 'payé')->where('status', '!=', 'annulée')->sum('total_price');
+                $this->chartBookings[] = $hourlyData->count();
+                 // Pour 'today', c'est peu pertinent d'avoir des maintenances heure par heure, mais on laisse 0 si vide.
+            $this->chartMaintenance[] = 0;
+            }
+        } elseif ($this->period == 'year') {
             for ($m = 1; $m <= 12; $m++) {
-                $date = Carbon::create(null, $m, 1);
-                $this->chartLabels[] = $date->format('M'); // Jan, Feb...
+                $this->chartLabels[] = Carbon::create(null, $m, 1)->format('M');
+                $monthData = $rawData->filter(fn($b) => $b->created_at->month == $m);
+                 $monthMaint = $maintenances->filter(fn($maint) => Carbon::parse($maint->start_date)->month == $m);
 
-                // On filtre les données pour ce mois précis
-                $this->chartRevenue[] = $rawData->filter(fn($b) => $b->created_at->month == $m)->sum('total_price');
-                $this->chartBookings[] = $rawData->filter(fn($b) => $b->created_at->month == $m)->count();
+                $this->chartRevenue[] = $monthData->where('payment_status', 'payé')->where('status', '!=', 'annulée')->sum('total_price');
+                $this->chartBookings[] = $monthData->count();
+                  $this->chartMaintenance[] = $monthMaint->sum('cost'); // Somme des coûts
             }
-        }
-        elseif ($this->period == 'month') {
-            // Boucle sur chaque jour du mois
-            $daysInMonth = now()->daysInMonth;
-            for ($d = 1; $d <= $daysInMonth; $d++) {
-                $this->chartLabels[] = $d; // 1, 2, 3...
+        } elseif ($this->period == 'month') {
+            $days = now()->daysInMonth;
+            for ($d = 1; $d <= $days; $d++) {
+                $this->chartLabels[] = $d;
+                $dayData = $rawData->filter(fn($b) => $b->created_at->day == $d);
+                 $dayMaint = $maintenances->filter(fn($maint) => Carbon::parse($maint->start_date)->day == $d);
 
-                $this->chartRevenue[] = $rawData->filter(fn($b) => $b->created_at->day == $d)->sum('total_price');
-                $this->chartBookings[] = $rawData->filter(fn($b) => $b->created_at->day == $d)->count();
+                $this->chartRevenue[] = $dayData->where('payment_status', 'payé')->where('status', '!=', 'annulée')->sum('total_price');
+                $this->chartBookings[] = $dayData->count();
+                  $this->chartMaintenance[] = $dayMaint->sum('cost'); // Somme des coûts
             }
-        }
-        elseif ($this->period == 'week') {
-            // Boucle sur les 7 jours de la semaine
+        } elseif ($this->period == 'week') {
             $current = $start->copy();
             for ($i = 0; $i < 7; $i++) {
-                $this->chartLabels[] = $current->locale('fr')->isoFormat('ddd'); // Lun, Mar...
+                $this->chartLabels[] = $current->locale('fr')->isoFormat('ddd');
+                $dayData = $rawData->filter(fn($b) => $b->created_at->isSameDay($current));
+                 $dayMaint = $maintenances->filter(fn($maint) => Carbon::parse($maint->start_date)->isSameDay($current));
 
-                $this->chartRevenue[] = $rawData->filter(fn($b) => $b->created_at->isSameDay($current))->sum('total_price');
-                $this->chartBookings[] = $rawData->filter(fn($b) => $b->created_at->isSameDay($current))->count();
-
+                $this->chartRevenue[] = $dayData->where('payment_status', 'payé')->where('status', '!=', 'annulée')->sum('total_price');
+                $this->chartBookings[] = $dayData->count();
+                  $this->chartMaintenance[] = $dayMaint->sum('cost');
                 $current->addDay();
-            }
-        }
-        elseif ($this->period == 'today') {
-            // Boucle sur des tranches horaires (toutes les 4h par exemple)
-            for ($h = 0; $h <= 23; $h+=4) {
-                $this->chartLabels[] = $h.'h';
-
-                // On prend la tranche de 4h
-                $this->chartRevenue[] = $rawData->filter(fn($b) => $b->created_at->hour >= $h && $b->created_at->hour < $h+4)->sum('total_price');
-                $this->chartBookings[] = $rawData->filter(fn($b) => $b->created_at->hour >= $h && $b->created_at->hour < $h+4)->count();
             }
         }
     }

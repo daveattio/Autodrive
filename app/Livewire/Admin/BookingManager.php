@@ -134,13 +134,24 @@ class BookingManager extends Component
 
         // Filtres Dates (Nouveau)
         if ($this->dateStart) {
-            $query->whereDate('start_date', '>=', $this->dateStart);
+            $query->whereDate('created_at', '>=', $this->dateStart); // MAINTENANT
         }
         if ($this->dateEnd) {
-            $query->whereDate('end_date', '<=', $this->dateEnd);
+            $query->whereDate('created_at', '<=', $this->dateEnd);   // MAINTENANT
         }
 
-        $bookings = $query->latest()->paginate(10);
+       // TRI INTELLIGENT & INFALLIBLE
+        $bookings = $query
+            // 1. D'abord l'urgence (En attente ou Validation Paiement)
+            ->orderByRaw("CASE
+                WHEN status = 'en_attente' THEN 3
+                WHEN payment_status = 'en_attente_validation' THEN 2
+                ELSE 1 END DESC")
+
+            // 2. ENSUITE PAR ID DÉCROISSANT (Le dernier créé est TOUJOURS en haut)
+            ->orderBy('id', 'desc')
+
+            ->paginate(10);
 
         return view('livewire.admin.booking-manager', [
             'bookings' => $bookings
@@ -152,6 +163,15 @@ class BookingManager extends Component
         $this->resetPage();
     }
 
+    // Valider uniquement le paiement (après avoir vu la preuve)
+    public function validatePayment($bookingId)
+    {
+        $booking = Booking::find($bookingId);
+        if ($booking) {
+            $booking->update(['payment_status' => 'payé']);
+            session()->flash('message', 'Paiement validé avec succès !');
+        }
+    }
     // Helper pour récupérer les IDs de la page (pour le Select All)
     private function getCurrentPageIds()
     {

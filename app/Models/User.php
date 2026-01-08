@@ -19,22 +19,29 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-        // Nouveaux champs :
-        'client_type',
-        'phone',
-        'address',
-        'city',
-        'license_number',
-        'passport_number',
-        'origin_country',
-        'company_name',
-        'company_id',
-    ];
+   protected $fillable = [
+    'name',
+    'email',
+    'password',
+    'role',
+
+    // Infos Profil (Phase précédente)
+    'client_type',
+    'phone',
+    'address',
+    'city',
+    'license_number',
+    'passport_number',
+    'origin_country',
+    'company_name',
+    'company_id',
+
+    // --- NOUVEAUX CHAMPS DOCUMENTS (Phase 1) ---
+    'license_path',
+    'passport_path',
+    'company_doc_path',
+    'kyc_verified_at',
+];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -58,6 +65,9 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+
+            // --- NOUVEAU : Pour gérer la date de validation KYC ---
+            'kyc_verified_at' => 'datetime',
 
             // --- CHIFFREMENT DES DONNÉES SENSIBLES (PII) ---
             // Laravel va automatiquement crypter/décrypter ces colonnes

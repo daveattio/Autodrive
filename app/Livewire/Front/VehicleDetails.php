@@ -11,7 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Carbon\CarbonPeriod;
-use Livewire\Attributes\Validate;
+use App\Models\Maintenance;
 
 class VehicleDetails extends Component
 {
@@ -87,6 +87,18 @@ class VehicleDetails extends Component
                 $this->bookedDates[] = $date->format('Y-m-d');
             }
         }
+        // 2. Les Maintenances (NOUVEAU)
+        // Assure-toi d'importer le modèle en haut : use App\Models\Maintenance;
+        $maintenances = \App\Models\Maintenance::where('vehicle_id', $this->vehicle->id)
+            ->whereDate('end_date', '>=', now())
+            ->get();
+
+        foreach ($maintenances as $maintenance) {
+            $period = \Carbon\CarbonPeriod::create($maintenance->start_date, $maintenance->end_date);
+            foreach ($period as $date) {
+                $this->bookedDates[] = $date->format('Y-m-d');
+            }
+        }
     }
 
     public function setClientType($type)
@@ -126,7 +138,7 @@ class VehicleDetails extends Component
     }
 
     // Limite : 3 tentatives en 2 minutes
-    #[Validate(maxAttempts: 3, decaySeconds: 120)]
+
     public function bookVehicle()
     {
         if (!Auth::check()) {

@@ -132,15 +132,32 @@
 
                     <!-- Véhicule Cible -->
                     <td class="px-6 py-4">
-                        @if($promo->vehicle)
-                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                {{ $promo->vehicle->brand }} {{ $promo->vehicle->name }}
-                            </span>
-                        @else
-                            <span class="text-xs text-gray-400 italic">Toute la boutique</span>
-                        @endif
-                    </td>
+    @if($promo->vehicle)
+        <div class="flex flex-col items-start gap-1.5">
+            <!-- Nom du véhicule (Badge Bleu) -->
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                {{ $promo->vehicle->brand }} {{ $promo->vehicle->name }}
+            </span>
+
+            <!-- NOUVEAU : Catégorie & Transmission (Texte discret en dessous) -->
+            <div class="flex items-center gap-2 text-[10px] text-gray-500 uppercase tracking-wide ml-1">
+                <span class="bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200">
+                    {{ $promo->vehicle->type }}
+                </span>
+                <span class="text-gray-300">•</span>
+                <span class="bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200">
+                    {{ $promo->vehicle->transmission }}
+                </span>
+            </div>
+        </div>
+    @else
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium bg-gray-100 text-gray-500 border border-gray-200">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            Toute la flotte
+        </span>
+    @endif
+</td>
 
                     <!-- Actions -->
                     <td class="px-6 py-4 text-right text-sm font-medium">

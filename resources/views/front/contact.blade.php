@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Contact - AutoDrive</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="bg-gray-100 font-sans antialiased">
 
     @include('partials.navbar')
@@ -26,22 +28,33 @@
             </div>
 
             <!-- DROITE : LA CARTE (Prend toute la hauteur) -->
+            <!-- Carte avec Marqueur Précis -->
             <div class="w-full md:w-1/2 bg-gray-200 relative min-h-[400px]">
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63480.83912696765!2d1.2000000!3d6.1300000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1023e1c113185419%3A0x3226b54fb73963f6!2sLom%C3%A9%2C%20Togo!5e0!3m2!1sfr!2sfr!4v1700000000000!5m2!1sfr!2sfr"
                     width="100%"
                     height="100%"
                     style="border:0;"
-                    allowfullscreen=""
                     loading="lazy"
-                    class="absolute inset-0 w-full h-full object-cover">
+                    allowfullscreen
+                    class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition duration-700"
+                    src="https://maps.google.com/maps?q=6.133652,1.223129&hl=fr&z=15&output=embed">
                 </iframe>
 
-                <!-- Petite bulle info sur la carte -->
-                <div class="absolute bottom-6 left-6 bg-white p-4 rounded-xl shadow-lg max-w-xs">
-                    <p class="font-bold text-gray-800">Agence Principale</p>
-                    <p class="text-sm text-gray-600">Lomé, Togo</p>
-                    <p class="text-xs text-blue-600 mt-1 font-bold">+228 90 00 00 00</p>
+                <!-- La petite bulle d'info reste la même -->
+                <div class="absolute bottom-6 left-6 bg-white p-4 rounded-xl shadow-lg max-w-xs z-10 border border-gray-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="bg-blue-600 p-2 rounded-full text-white">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-800 leading-none">AutoDrive Agency</p>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1">Siège Social</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 pl-11">123 Avenue de la Libération,<br>Lomé, Togo</p>
                 </div>
             </div>
         </div>
@@ -53,4 +66,5 @@
     </footer>
 
 </body>
+
 </html>

@@ -141,6 +141,17 @@
                             borderWidth: 3, tension: 0.4, fill: true, yAxisID: 'y'
                         },
                         {
+                            label: 'Coûts Maintenance (FCFA)', // NOUVELLE COURBE
+                            data: @json($chartMaintenance),
+                            borderColor: '#ef4444', // Rouge
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)', // Rouge transparent
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y', // Même axe que le revenu (Argent)
+                            order: 1 // Devant le bleu
+                        },
+                        {
                             label: 'Réservations',
                             data: @json($chartBookings),
                             borderColor: '#f97316', // Orange
@@ -152,10 +163,29 @@
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     interaction: { mode: 'index', intersect: false },
-                    scales: {
-                        y: { type: 'linear', display: true, position: 'left', beginAtZero: true },
-                        y1: { type: 'linear', display: true, position: 'right', beginAtZero: true, grid: { drawOnChartArea: false } }
-                    }
+                   scales: {
+    y: {
+        type: 'linear',
+        display: true,
+        position: 'left',
+        beginAtZero: true
+    },
+    y1: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        beginAtZero: true,
+        grid: { drawOnChartArea: false },
+
+        // AJOUT : Force les nombres entiers (0, 1, 2, 3...)
+        ticks: {
+            stepSize: 1,
+            precision: 0
+        },
+        // Optionnel : Pour ne pas que la courbe touche le plafond si max = 1
+        suggestedMax: 5
+    }
+}
                 }
             });
 
@@ -184,7 +214,8 @@
                 // Mise à jour Ligne
                 revenueChart.data.labels = newData.line.labels;
                 revenueChart.data.datasets[0].data = newData.line.revenue;
-                revenueChart.data.datasets[1].data = newData.line.bookings;
+                 revenueChart.data.datasets[1].data = newData.line.maintenance;
+                revenueChart.data.datasets[2].data = newData.line.bookings;
                 revenueChart.update();
 
                 // Mise à jour Camembert

@@ -7,9 +7,7 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
                 <h2 class="text-2xl font-black text-gray-800 tracking-tight">Pilotage des Réservations</h2>
-                <p class="text-sm text-gray-500 font-medium">
-                    <span class="text-blue-600 font-bold">{{ $bookings->total() }}</span> dossier(s) trouvé(s)
-                </p>
+
             </div>
 
             <!-- BOUTON EXPORT (Logique conservée) -->
@@ -110,44 +108,36 @@
     <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full">
+                @php
+                $headers = [
+                ['key' => 'select', 'label' => '', 'align' => 'center', 'width' => 'w-12'],
+                ['key' => 'client_reference', 'label' => 'Client / Référence', 'align' => 'left'],
+                ['key' => 'vehicle', 'label' => 'Véhicule', 'align' => 'left'],
+                ['key' => 'period', 'label' => 'Période', 'align' => 'left'],
+                ['key' => 'amount', 'label' => 'Montant', 'align' => 'right'],
+                ['key' => 'status', 'label' => 'État', 'align' => 'center'],
+                ['key' => 'contract', 'label' => 'Contrat', 'align' => 'center'],
+                ['key' => 'actions', 'label' => 'Action', 'align' => 'center'],
+                ];
+                @endphp
+
                 <thead>
                     <tr class="bg-slate-50 border-b border-gray-200 hover:bg-slate-100 transition-colors duration-150">
-                        <!-- Case à cocher -->
-                        <th scope="col" class="px-6 py-4 text-center w-12">
+                        @foreach ($headers as $header)
+                        @if ($header['key'] === 'select')
+                        <th scope="col" class="px-6 py-4 {{ $header['width'] ?? '' }} text-center">
                             <input
                                 type="checkbox"
                                 wire:model.live="selectAll"
                                 class="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 focus:ring-2"
                                 aria-label="Tout sélectionner">
                         </th>
-                        <!-- Client / Référence -->
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700">
-                            Client / Référence
+                        @else
+                        <th scope="col" class="px-6 py-4 text-{{ $header['align'] }} text-xs font-bold uppercase tracking-wider text-gray-700">
+                            {{ $header['label'] }}
                         </th>
-                        <!-- Véhicule -->
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700">
-                            Véhicule
-                        </th>
-                        <!-- Période -->
-                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-gray-700">
-                            Période
-                        </th>
-                        <!-- Montant -->
-                        <th scope="col" class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-gray-700">
-                            Montant
-                        </th>
-                        <!-- État -->
-                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-gray-700">
-                            État
-                        </th>
-                        <!-- Contrat -->
-                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-gray-700">
-                            Contrat
-                        </th>
-                        <!-- Action -->
-                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-gray-700">
-                            Action
-                        </th>
+                        @endif
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -206,7 +196,7 @@
                         </td>
 
                         <!-- État (Statut + Paiement regroupés pour gagner de la place) -->
-                        <td class="px-6 py-4 text-center">
+                        <td class="px-6 py-4 text-center align-top">
                             <div class="flex flex-col items-center gap-2">
                                 <!-- Statut (badge plus visible) -->
                                 @if($booking->status == 'en_attente')
@@ -225,17 +215,44 @@
 
                                 <!-- Paiement -->
                                 @if($booking->payment_status == 'payé')
-                                <span class="text-sm font-medium text-green-700 flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Payé
-                                </span>
-                                @else
-                                <span class="text-sm font-medium text-red-600">
-                                    Impayé
-                                </span>
-                                @endif
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                PAYÉ
+            </span>
+        @elseif($booking->payment_status == 'en_attente_validation')
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 border border-blue-200 animate-pulse">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                VÉRIFICATION
+            </span>
+        @else
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-600 border border-red-100">
+                IMPAYÉ
+            </span>
+        @endif
+
+        <!-- 2. ACTIONS DE PREUVE (Si une preuve existe) -->
+        @if($booking->payment_proof_path)
+            <div class="flex flex-col gap-1 w-full">
+
+                <!-- A. Voir la preuve (Ouvre dans un nouvel onglet) -->
+                <a href="{{ asset('storage/' . $booking->payment_proof_path) }}" target="_blank"
+                   class="group flex items-center justify-center gap-1 text-[10px] font-bold text-gray-500 hover:text-blue-600 border border-gray-200 rounded px-2 py-1 bg-white hover:bg-blue-50 transition"
+                   title="Voir le reçu">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    Voir Preuve
+                </a>
+
+                <!-- B. Bouton Valider (Seulement si pas encore payé) -->
+                @if($booking->payment_status == 'en_attente_validation')
+                    <button wire:click="validatePayment({{ $booking->id }})"
+                            wire:confirm="Avez-vous bien vérifié la réception de l'argent ?"
+                            class="flex items-center justify-center gap-1 text-[10px] font-bold text-white bg-blue-600 hover:bg-blue-700 rounded px-2 py-1 shadow-sm transition">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Confirmer Reçu
+                    </button>
+                @endif
+            </div>
+        @endif
                             </div>
                         </td>
                         <!-- Contrat -->

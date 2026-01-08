@@ -5,7 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\Vehicle;
 use Livewire\WithFileUploads;
-use App\Services\SecurityLogger;
+use Illuminate\Support\Facades\Storage;
 
 class VehicleManager extends Component
 {
@@ -13,33 +13,31 @@ class VehicleManager extends Component
 
     public $vehicles;
 
-    // Tous les champs nécessaires
+    // Champs du formulaire
     public $name, $brand, $type, $daily_price, $transmission, $description, $image;
 
-    // Pour gérer l'édition
+    // État de l'édition
     public $vehicleIdToEdit = null;
     public $isEditMode = false;
-    public $oldImage = null; // Pour afficher l'image existante en modif
+    public $oldImage = null;
 
-    public function mount()
-    {
+    public function mount() {
         $this->refreshVehicles();
     }
 
-    public function refreshVehicles()
-    {
+    public function refreshVehicles() {
         $this->vehicles = Vehicle::latest()->get();
     }
 
-    // Validation des données
+    // Règles de validation (Prix positif ajouté)
     protected $rules = [
         'brand' => 'required|min:2',
         'name' => 'required',
-        'type' => 'required', // On oblige l'admin à choisir
-        'transmission' => 'required', // On oblige l'admin à choisir
-        'daily_price' => 'required|numeric|min:1000',
-        'description' => 'required|min:10', // Description obligatoire
-        'image' => 'nullable|image|max:2048', // 2MB Max
+        'type' => 'required',
+        'transmission' => 'required',
+        'daily_price' => 'required|numeric|min:1', // <--- PRIX POSITIF OBLIGATOIRE
+        'description' => 'required|min:10',
+        'image' => 'nullable|image|max:2048', // Max 2MB
     ];
 
     public function editVehicle($id)
@@ -53,7 +51,7 @@ class VehicleManager extends Component
             $this->daily_price = $vehicle->daily_price;
             $this->transmission = $vehicle->transmission;
             $this->description = $vehicle->description;
-            $this->oldImage = $vehicle->image; // On garde l'ancienne image en mémoire
+            $this->oldImage = $vehicle->image;
             $this->isEditMode = true;
         }
     }
@@ -62,55 +60,33 @@ class VehicleManager extends Component
     {
         $this->validate();
 
-        if ($this->isEditMode) {
-            // MODE MODIFICATION
-            $vehicle = Vehicle::find($this->vehicleIdToEdit);
+        $data = [
+            'name' => $this->name,
+            'brand' => $this->brand,
+            'type' => $this->type,
+            'transmission' => $this->transmission,
+            'daily_price' => $this->daily_price,
+            'description' => $this->description,
+        ];
 
-            $data = [
-                'name' => $this->name,
-                'brand' => $this->brand,
-                'type' => $this->type,
-                'transmission' => $this->transmission,
-                'daily_price' => $this->daily_price,
-                'description' => $this->description,
-            ];
-
-            // Si une nouvelle image est uploadée, on remplace l'ancienne
-            if ($this->image) {
-                $data['image'] = $this->image->store('vehicles', 'public');
-            }
-
-            $vehicle->update($data);
-            session()->flash('message', 'Véhicule modifié avec succès !');
-
-
-
-        } else {
-            // MODE CRÉATION
-            // Ici, plus de valeurs par défaut ! On prend ce qu'il y a dans le formulaire.
-            $imagePath = $this->image ? $this->image->store('vehicles', 'public') : null;
-
-            Vehicle::create([
-                'name' => $this->name,
-                'brand' => $this->brand,
-                'type' => $this->type,
-                'transmission' => $this->transmission,
-                'daily_price' => $this->daily_price,
-                'description' => $this->description,
-                'image' => $imagePath,
-                'is_available' => true
-            ]);
-            session()->flash('message', 'Véhicule ajouté avec succès !');
-
+        // Gestion de l'image
+        if ($this->image) {
+            $data['image'] = $this->image->store('vehicles', 'public');
         }
 
-        $this->cancelEdit(); // Réinitialiser le formulaire
-        $this->refreshVehicles();
-    }
+        if ($this->isEditMode) {
+            $vehicle = Vehicle::find($this->vehicleIdToEdit);
+            $vehicle->update($data);
+            session()->flash('message', 'Véhicule modifié avec succès !');
+        } else {
+            // Par défaut disponible
+            $data['is_available'] = true;
+            Vehicle::create($data);
+            session()->flash('message', 'Nouveau véhicule ajouté au parc !');
+        }
 
-    public function cancelEdit()
-    {
-        $this->reset(['name', 'brand', 'type', 'daily_price', 'transmission', 'description', 'image', 'vehicleIdToEdit', 'isEditMode', 'oldImage']);
+        $this->cancelEdit();
+        $this->refreshVehicles();
     }
 
     public function deleteVehicle($id)
@@ -119,8 +95,12 @@ class VehicleManager extends Component
         if ($vehicle) {
             $vehicle->delete();
             $this->refreshVehicles();
-            session()->flash('message', 'Véhicule supprimé.');
+            session()->flash('message', 'Véhicule retiré du parc.');
         }
+    }
+
+    public function cancelEdit() {
+        $this->reset(['name', 'brand', 'type', 'daily_price', 'transmission', 'description', 'image', 'vehicleIdToEdit', 'isEditMode', 'oldImage']);
     }
 
     public function render()

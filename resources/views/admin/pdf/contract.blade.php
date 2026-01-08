@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Contrat N°{{ str_pad($booking->id, 6, '0', STR_PAD_LEFT) }}</title>
     <style>
         @page {
-            margin: 100px 30px 50px 30px; /* Haut, Droite, Bas, Gauche */
+            margin: 100px 30px 50px 30px;
+            /* Haut, Droite, Bas, Gauche */
         }
 
         body {
@@ -25,12 +27,34 @@
             border-bottom: 2px solid #1e3a8a;
         }
 
-        .header-left { float: left; width: 60%; }
-        .header-right { float: right; width: 40%; text-align: right; }
+        .header-left {
+            float: left;
+            width: 60%;
+        }
 
-        .logo-text { font-size: 26px; font-weight: 900; color: #1e3a8a; text-transform: uppercase; letter-spacing: -1px; }
-        .logo-text span { color: #3b82f6; }
-        .agency-info { font-size: 9px; color: #64748b; margin-top: 2px; }
+        .header-right {
+            float: right;
+            width: 40%;
+            text-align: right;
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 900;
+            color: #1e3a8a;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .logo-text span {
+            color: #3b82f6;
+        }
+
+        .agency-info {
+            font-size: 9px;
+            color: #64748b;
+            margin-top: 2px;
+        }
 
         .ref-box {
             border: 1px solid #1e3a8a;
@@ -39,8 +63,19 @@
             display: inline-block;
             background: #eff6ff;
         }
-        .ref-title { font-size: 8px; text-transform: uppercase; color: #1e3a8a; font-weight: bold; }
-        .ref-number { font-size: 14px; font-weight: bold; color: #000; }
+
+        .ref-title {
+            font-size: 8px;
+            text-transform: uppercase;
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+
+        .ref-number {
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+        }
 
         /* --- FOOTER FIXE --- */
         footer {
@@ -55,7 +90,10 @@
             border-top: 1px solid #e2e8f0;
             padding-top: 5px;
         }
-        .page-num:after { content: counter(page); }
+
+        .page-num:after {
+            content: counter(page);
+        }
 
         /* --- CONTENU --- */
         .page-title {
@@ -72,13 +110,46 @@
         }
 
         /* GRILLES D'INFO */
-        table.grid { width: 100%; border-collapse: separate; border-spacing: 15px 0; margin-left: -8px; width: calc(100% + 16px); }
-        .box { border: 1px solid #cbd5e1; border-radius: 4px; height: 110px; padding: 10px; }
-        .box-title { font-size: 10px; font-weight: bold; color: #1e3a8a; text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; margin-bottom: 8px; }
+        table.grid {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 15px 0;
+            margin-left: -8px;
+            width: calc(100% + 16px);
+        }
 
-        .row { margin-bottom: 4px; }
-        .label { font-weight: bold; color: #64748b; width: 70px; display: inline-block; }
-        .val { font-weight: 600; color: #000; }
+        .box {
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            height: 110px;
+            padding: 10px;
+        }
+
+        .box-title {
+            font-size: 10px;
+            font-weight: bold;
+            color: #1e3a8a;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 3px;
+            margin-bottom: 8px;
+        }
+
+        .row {
+            margin-bottom: 4px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #64748b;
+            width: 70px;
+            display: inline-block;
+        }
+
+        .val {
+            font-weight: 600;
+            color: #000;
+        }
 
         /* SECTION MANUELLE (CARBURANT & ÉTAT) */
         .manual-section {
@@ -88,15 +159,53 @@
             padding: 10px;
             background-color: #fff;
         }
-        .manual-grid { width: 100%; }
-        .check-box { display: inline-block; width: 12px; height: 12px; border: 1px solid #000; margin-right: 5px; vertical-align: middle; }
-        .fuel-level { font-size: 10px; color: #333; }
+
+        .manual-grid {
+            width: 100%;
+        }
+
+        .check-box {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        .fuel-level {
+            font-size: 10px;
+            color: #333;
+        }
 
         /* TABLEAU PRIX */
-        .price-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .price-table th { background: #1e3a8a; color: white; padding: 8px; text-align: left; font-size: 9px; text-transform: uppercase; }
-        .price-table td { padding: 8px; border-bottom: 1px solid #e2e8f0; }
-        .total-row td { background: #f8fafc; font-size: 13px; font-weight: bold; color: #1e3a8a; border-top: 2px solid #1e3a8a; }
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .price-table th {
+            background: #1e3a8a;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+
+        .price-table td {
+            padding: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .total-row td {
+            background: #f8fafc;
+            font-size: 13px;
+            font-weight: bold;
+            color: #1e3a8a;
+            border-top: 2px solid #1e3a8a;
+        }
 
         /* TAMPON */
         .stamp-container {
@@ -105,6 +214,7 @@
             margin-top: 10px;
             margin-bottom: 10px;
         }
+
         .stamp {
             position: absolute;
             right: 10px;
@@ -118,7 +228,11 @@
             transform: rotate(-8deg);
             opacity: 0.7;
         }
-        .stamp-unpaid { border-color: #ef4444; color: #ef4444; }
+
+        .stamp-unpaid {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
 
         /* SIGNATURES (Bas de page absolu pour Page 1) */
         .signatures-wrapper {
@@ -128,13 +242,20 @@
             right: 0;
             height: 120px;
         }
-        .sig-table { width: 100%; border-collapse: separate; border-spacing: 20px 0; }
+
+        .sig-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 20px 0;
+        }
+
         .sig-box {
             border: 1px solid #94a3b8;
             height: 90px;
             background: #fdfdfd;
             position: relative;
         }
+
         .sig-header {
             background: #f1f5f9;
             color: #475569;
@@ -145,12 +266,20 @@
             border-bottom: 1px solid #e2e8f0;
             text-transform: uppercase;
         }
+
         .sig-bottom {
-            position: absolute; bottom: 5px; right: 5px; font-size: 8px; color: #94a3b8;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 8px;
+            color: #94a3b8;
         }
 
         /* PAGE 2 */
-        .page-break { page-break-after: always; }
+        .page-break {
+            page-break-after: always;
+        }
+
         .cgl-content {
             font-size: 9px;
             line-height: 1.4;
@@ -158,15 +287,24 @@
             column-gap: 30px;
             text-align: justify;
         }
-        .cgl-content h4 { margin: 8px 0 2px; color: #1e3a8a; font-size: 10px; }
-        .cgl-content p { margin-bottom: 6px; }
 
+        .cgl-content h4 {
+            margin: 8px 0 2px;
+            color: #1e3a8a;
+            font-size: 10px;
+        }
+
+        .cgl-content p {
+            margin-bottom: 6px;
+        }
     </style>
 </head>
+
 <body>
 
-    <!-- HEADER GLOBAL -->
+    <!-- HEADER FIXE -->
     <header>
+        <!-- PARTIE GAUCHE (Logo + Infos) -->
         <div class="header-left">
             <div class="logo-text">AUTO<span>DRIVE</span></div>
             <div class="agency-info">
@@ -174,12 +312,26 @@
                 Tél : +228 90 00 00 00 | Email : contact@autodrive.tg
             </div>
         </div>
-        <div class="header-right">
-            <div class="ref-box">
-                <div class="ref-title">CONTRAT RÉF.</div>
-                <div class="ref-number">#{{ str_pad($booking->id, 6, '0', STR_PAD_LEFT) }}</div>
-            </div>
-            <div style="margin-top:5px; font-size:10px;">Date : {{ now()->format('d/m/Y') }}</div>
+
+        <!-- PARTIE DROITE (Tableau pour aligner Réf + QR sans bug) -->
+        <div class="header-right" style="width: 40%; float: right;">
+            <table style="width: 100%;">
+                <tr>
+                    <!-- Cellule 1 : La Référence (Alignée à droite, avec marge à droite) -->
+                    <td style="text-align: right; vertical-align: middle; padding-right: 10px;">
+                        <div class="ref-box" style="display: inline-block;">
+                            <div class="ref-title">RÉFÉRENCE</div>
+                            <div class="ref-number">#{{ str_pad($booking->id, 6, '0', STR_PAD_LEFT) }}</div>
+                        </div>
+                        <div style="margin-top:5px; font-size:10px;">{{ now()->format('d/m/Y') }}</div>
+                    </td>
+
+                    <!-- Cellule 2 : Le QR Code (Collé à droite) -->
+                    <td style="text-align: right; vertical-align: middle; width: 60px;">
+                        <img src="{{ $qrCode }}" style="width: 60px; height: 60px; display: block;">
+                    </td>
+                </tr>
+            </table>
         </div>
     </header>
 
@@ -202,10 +354,10 @@
                     <div class="row"><span class="label">Tél :</span><span class="val">{{ $booking->user->phone ?? 'N/A' }}</span></div>
 
                     @if($booking->user->client_type == 'entreprise')
-                        <div class="row"><span class="label">Société :</span><span class="val">{{ $booking->user->company_name }}</span></div>
-                        <div class="row"><span class="label">NIF :</span><span class="val">{{ $booking->user->company_id }}</span></div>
+                    <div class="row"><span class="label">Société :</span><span class="val">{{ $booking->user->company_name }}</span></div>
+                    <div class="row"><span class="label">NIF :</span><span class="val">{{ $booking->user->company_id }}</span></div>
                     @else
-                        <div class="row"><span class="label">Permis :</span><span class="val">{{ $booking->user->license_number ?? 'N/A' }}</span></div>
+                    <div class="row"><span class="label">Permis :</span><span class="val">{{ $booking->user->license_number ?? 'N/A' }}</span></div>
                     @endif
                     <div class="row"><span class="label">Ville :</span><span class="val">{{ $booking->user->city ?? 'Lomé' }}</span></div>
                 </div>
@@ -231,13 +383,13 @@
                 <td width="50%">
                     <strong>Carburant Départ :</strong><br>
                     <span class="fuel-level">
-                        [  ] 1/4 &nbsp;&nbsp; [  ] 1/2 &nbsp;&nbsp; [ ] 3/4 &nbsp;&nbsp; [  ] PLEIN
+                        [ ] 1/4 &nbsp;&nbsp; [ ] 1/2 &nbsp;&nbsp; [ ] 3/4 &nbsp;&nbsp; [ ] PLEIN
                     </span>
                 </td>
                 <td width="50%">
                     <strong>Propreté / État :</strong><br>
                     <span class="fuel-level">
-                        [  ] Intérieur OK &nbsp;&nbsp; [  ] Extérieur OK &nbsp;&nbsp; [  ] Roue de secours
+                        [ ] Intérieur OK &nbsp;&nbsp; [ ] Extérieur OK &nbsp;&nbsp; [ ] Roue de secours
                     </span>
                 </td>
             </tr>
@@ -276,9 +428,9 @@
     <!-- 4. Tampon -->
     <div class="stamp-container">
         @if($booking->payment_status == 'payé')
-            <div class="stamp">PAYÉ</div>
+        <div class="stamp">PAYÉ</div>
         @else
-            <div class="stamp stamp-unpaid">IMPAYÉ</div>
+        <div class="stamp stamp-unpaid">IMPAYÉ</div>
         @endif
     </div>
 
@@ -341,4 +493,5 @@
     </div>
 
 </body>
+
 </html>

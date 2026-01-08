@@ -30,8 +30,8 @@ Route::view('/blog', 'front.blog')->name('blog');
 Route::get('/promotions', function () {
     // Changement ici : paginate(6) pour avoir des pages
     $promotions = Promotion::whereDate('end_date', '>=', now())
-                    ->latest()
-                    ->paginate(6);
+        ->latest()
+        ->paginate(6);
     return view('front.promotions', compact('promotions'));
 })->name('promotions');
 
@@ -40,6 +40,8 @@ Route::get('/promotions', function () {
 // 2. ZONE CLIENT (Connexion requise)
 // ==========================================
 Route::middleware(['auth'])->group(function () {
+    // Documents Profil Utilisateur
+    Route::get('/user/documents', \App\Livewire\User\ProfileDocuments::class)->name('user.documents');
 
     // Mes réservations
     Route::get('/mes-reservations', UserBookings::class)->name('user.bookings');
@@ -61,6 +63,10 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
     Route::get('/admin/contract/{id}', [PdfController::class, 'generateContract'])->name('admin.contract');
 });
 
+// Route Facture (Accessible Client & Admin)
+Route::get('/invoice/{id}', [App\Http\Controllers\InvoiceController::class, 'download'])
+    ->middleware(['auth'])
+    ->name('invoice.download');
 
 // ==========================================
 // 4. SYSTÈME & REDIRECTION
@@ -78,7 +84,6 @@ Route::get('/dashboard', function () {
 
     // Sinon, c'est un client
     return redirect()->route('vehicles.index');
-
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 require __DIR__ . '/auth.php';
