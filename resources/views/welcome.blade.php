@@ -9,7 +9,7 @@
 
     <!-- Image de fond avec effet de zoom lent -->
     <div class="absolute inset-0 z-0">
-        <img src="https://images.unsplash.com/photo-1493238792000-8113da705763?q=80&w=2000&auto=format&fit=crop"
+        <img src="https://images.pexels.com/photos/164634/pexels-photo-164634.jpeg"
              class="w-full h-full object-cover opacity-50 animate-slow-zoom"
              alt="Luxury Car">
         <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-slate-900/60"></div>
@@ -18,7 +18,7 @@
     <!-- Contenu Central -->
     <div class="relative z-10 container mx-auto px-4 text-center text-white mt-10">
         <span class="inline-block py-1 px-3 rounded-full bg-blue-600/20 border border-blue-500/50 text-blue-300 text-xs font-bold uppercase tracking-widest mb-6 animate-fade-in-down">
-            Nouvelle Flotte 2025 Disponible
+            Nouvelle Flotte 2026 Disponible
         </span>
 
         <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight animate-fade-in-up">
@@ -77,7 +77,7 @@
                 <span class="text-sm text-gray-500 uppercase tracking-wider font-bold">Satisfait</span>
             </div>
             <div class="reveal delay-300">
-                <span class="block text-4xl font-black text-green-500 mb-1">0€</span>
+                <span class="block text-4xl font-black text-green-500 mb-1">0F</span>
                 <span class="text-sm text-gray-500 uppercase tracking-wider font-bold">Frais cachés</span>
             </div>
         </div>

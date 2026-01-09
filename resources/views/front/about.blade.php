@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="bg-white">
-    
+
     <!-- 1. HERO : BUSINESS & VISION -->
     <div class="relative py-24 bg-slate-50">
         <div class="container mx-auto px-4 text-center relative z-10">
@@ -21,19 +21,19 @@
     <!-- 2. L'HISTOIRE (STORYTELLING) -->
     <div class="py-20 container mx-auto px-4">
         <div class="flex flex-col md:flex-row gap-16 items-start">
-            
+
             <!-- Image d'illustration (Flotte/Agence) -->
             <div class="md:w-1/2 relative group">
                 <div class="absolute inset-0 bg-blue-600 rounded-3xl transform translate-x-3 translate-y-3 group-hover:translate-x-2 group-hover:translate-y-2 transition"></div>
-                <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=1000&auto=format&fit=crop" 
-                     class="relative rounded-3xl shadow-lg border-2 border-white w-full h-[500px] object-cover" 
+                <img src="https://images.pexels.com/photos/109361/pexels-photo-109361.jpeg"
+                     class="relative rounded-3xl shadow-lg border-2 border-white w-full h-[500px] object-cover"
                      alt="Flotte AutoDrive">
             </div>
 
             <!-- Texte -->
             <div class="md:w-1/2 pt-4">
                 <h2 class="text-3xl font-bold text-gray-900 mb-6">Tout a commencé par un constat.</h2>
-                
+
                 <div class="prose text-gray-600 leading-relaxed mb-8 space-y-4">
                     <p>
                         Louer un véhicule à Lomé a longtemps été un parcours du combattant : disponibilité incertaine, état des véhicules variable, et surtout, une opacité sur les tarifs et les assurances.
@@ -117,7 +117,7 @@
     <!-- 4. L'EXPERTISE TECHNIQUE (Badges discrets en bas) -->
     <div class="bg-slate-900 py-16 text-white overflow-hidden">
         <div class="container mx-auto px-4 flex flex-col md:flex-row items-center gap-12">
-            
+
             <div class="md:w-2/3">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="p-2 bg-blue-600/20 rounded-lg text-blue-400">

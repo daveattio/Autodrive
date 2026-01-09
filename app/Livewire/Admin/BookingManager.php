@@ -62,6 +62,9 @@ class BookingManager extends Component
     // EXPORT INTELLIGENT
     public function export($type = 'all')
     {
+        // Nettoyage mémoire
+        if (ob_get_length()) { ob_end_clean(); }
+
         if ($type === 'selection' && count($this->selectedRows) > 0) {
             // 1. Export de la sélection
             return Excel::download(new BookingsExport($this->selectedRows), 'selection_reservations.xlsx');

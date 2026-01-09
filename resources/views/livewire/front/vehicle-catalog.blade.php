@@ -1,10 +1,5 @@
 <div class="container mx-auto px-4 py-8 max-w-7xl">
 
-    <!-- CHARGEMENT FLATPICKR (Si pas déjà dans le layout) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
     <!-- 1. BARRE DE FILTRES PRINCIPALE (Horizontale & Moderne) -->
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 mb-8 sticky top-20 z-30 transition-all duration-300">
         <div class="flex flex-col lg:flex-row gap-4 items-center">

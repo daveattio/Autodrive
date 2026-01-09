@@ -57,12 +57,13 @@ class BookingsExport implements FromQuery, WithHeadings, WithMapping, ShouldAuto
 
         // Filtres Dates
         if (!empty($this->filters['date_start'])) {
-            $query->whereDate('start_date', '>=', $this->filters['date_start']);
+            $query->whereDate('created_at', '>=', $this->filters['date_start']);
         }
         if (!empty($this->filters['date_end'])) {
-            $query->whereDate('end_date', '<=', $this->filters['date_end']);
+            $query->whereDate('created_at', '<=', $this->filters['date_end']);
         }
 
+        // On trie par ID décroissant pour l'Excel (plus simple)
         return $query->orderBy('id', 'desc');
     }
 

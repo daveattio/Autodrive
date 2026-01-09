@@ -82,7 +82,7 @@
             <!-- Article 3 : SEO "Utilitaire" -->
             <article class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:-translate-y-2 transition duration-300 group">
                 <div class="h-56 overflow-hidden relative">
-                    <img src="https://images.unsplash.com/photo-1586191582150-03796b5417eb?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <img src="https://images.pexels.com/photos/33767582/pexels-photo-33767582.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                 </div>
                 <div class="p-6">
                     <span class="text-orange-600 text-xs font-bold uppercase tracking-wider">Entreprise</span>

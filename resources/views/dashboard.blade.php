@@ -1,43 +1,67 @@
 <x-app-layout>
-    <!-- AVANT : <div class="py-12..." x-data="{ activeTab: 'analytics' }"> -->
 
-    <!-- APRÈS : On lit la mémoire, et on surveille les changements -->
-    <div class="py-12 bg-gray-100 min-h-screen"
+    <!-- GESTION DE LA MÉMOIRE DES ONGLETS -->
+    <div class="bg-gray-50 min-h-screen"
         x-data="{ activeTab: localStorage.getItem('currentTab') || 'analytics' }"
         x-init="$watch('activeTab', val => localStorage.setItem('currentTab', val))"
         x-cloak>
 
-        <!-- w-full pour prendre toute la largeur, px-4 pour ne pas coller aux bords -->
-        <div class="w-full px-4 sm:px-6 lg:px-8">
+        <!-- 1. NAVBAR ADMIN (Remplacement de la nav par défaut) -->
+        <div class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
 
-            <!-- EN-TÊTE DASHBOARD -->
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pt-6">
+                    <!-- Logo & Titre -->
+                    <div class="flex items-center gap-4">
+                        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2">
+                            <div class="bg-blue-600 text-white p-1.5 rounded-lg">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <span class="text-xl font-black text-gray-900 tracking-tight">Auto<span class="text-blue-600">Drive</span> <span class="text-gray-400 font-medium text-sm ml-1">Admin</span></span>
+                        </a>
+                    </div>
 
-                <div class="flex items-center gap-4">
+                    <!-- Actions Droite -->
+                    <div class="flex items-center gap-4">
+                        <a href="{{ url('/') }}" target="_blank" class="text-sm font-bold text-gray-500 hover:text-blue-600 flex items-center gap-1 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                            Site Public
+                        </a>
 
-                    <div class="h-6 w-px bg-gray-300 mx-2 hidden md:block"></div>
+                        <div class="h-6 w-px bg-gray-200"></div>
 
-                    <h2 class="text-xl font-bold text-gray-500 hidden md:block">Administration</h2>
+                        <!-- Profil Admin -->
+                        <div class="flex items-center gap-3">
+                            <div class="text-right hidden md:block">
+                                <div class="text-sm font-bold text-gray-800">{{ Auth::user()->name }}</div>
+                                <div class="text-[10px] uppercase font-bold text-blue-600">{{ Auth::user()->role === 'super_admin' ? 'Super Admin' : 'Administrateur' }}</div>
+                            </div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="bg-gray-100 hover:bg-red-100 text-gray-500 hover:text-red-600 p-2 rounded-full transition" title="Déconnexion">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Bouton Retour Site -->
-                <a href="{{ url('/') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-700 hover:text-blue-600 text-sm font-bold rounded-lg shadow-sm border border-gray-200 transition">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                    Voir le site public
-                </a>
             </div>
-            @php
-            $gridCols = Auth::user()->role === 'super_admin' ? 'md:grid-cols-7' : 'md:grid-cols-5';
-            @endphp
-            <!-- BARRE DE NAVIGATION (TABS PLEINE LARGEUR) -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-1.5 mb-8 sticky top-4 z-30">
+        </div>
 
-                <!-- On utilise GRID pour diviser l'espace en 5 parts égales -->
+        <!-- 2. CONTENU PRINCIPAL -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+            <!-- LOGIQUE DES COLONNES (Grille Dynamique) -->
+            @php
+                // Si Super Admin : 7 onglets. Si Admin : 5 onglets.
+                $gridCols = Auth::user()->role === 'super_admin' ? 'md:grid-cols-7' : 'md:grid-cols-5';
+            @endphp
+
+            <!-- 3. LES ONGLETS (TABS) -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-1.5 mb-8">
                 <div class="grid grid-cols-2 {{ $gridCols }} gap-1">
 
-                    <!-- Bouton VUE D'ENSEMBLE (Réservé Super Admin) -->
+                    <!-- VUE D'ENSEMBLE (Super Admin Only) -->
                     @if(Auth::user()->role === 'super_admin')
                     <button @click="activeTab = 'analytics'"
                         :class="activeTab === 'analytics' ? 'bg-gray-900 text-white shadow' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
@@ -49,7 +73,7 @@
                     </button>
                     @endif
 
-                    <!-- 2. RÉSERVATIONS -->
+                    <!-- RÉSERVATIONS -->
                     <button @click="activeTab = 'bookings'"
                         :class="activeTab === 'bookings' ? 'bg-blue-600 text-white shadow' : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'"
                         class="px-4 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 w-full relative">
@@ -63,7 +87,7 @@
                         </div>
                     </button>
 
-                    <!-- 3. VÉHICULES -->
+                    <!-- VÉHICULES -->
                     <button @click="activeTab = 'vehicles'"
                         :class="activeTab === 'vehicles' ? 'bg-gray-900 text-white shadow' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
                         class="px-4 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 w-full">
@@ -72,8 +96,8 @@
                         </svg>
                         Véhicules
                     </button>
-                    <!-- 4. MAINTENANCE -->
 
+                    <!-- MAINTENANCE -->
                     <button @click="activeTab = 'maintenance'"
                         :class="activeTab === 'maintenance' ? 'bg-gray-900 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'"
                         class="px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2">
@@ -85,8 +109,7 @@
                         Maintenance
                     </button>
 
-
-                    <!-- 5. PROMOTIONS -->
+                    <!-- PROMOTIONS -->
                     <button @click="activeTab = 'promos'"
                         :class="activeTab === 'promos' ? 'bg-gray-900 text-white shadow' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
                         class="px-4 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 w-full">
@@ -96,7 +119,7 @@
                         Promotions
                     </button>
 
-                    <!-- 6. CLIENTS -->
+                    <!-- CLIENTS -->
                     <button @click="activeTab = 'clients'"
                         :class="activeTab === 'clients' ? 'bg-gray-900 text-white shadow' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
                         class="px-4 py-3 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 w-full">
@@ -109,7 +132,8 @@
                             <livewire:admin.kyc-badge />
                         </div>
                     </button>
-                    <!-- Bouton SÉCURITÉ -->
+
+                    <!-- SÉCURITÉ (Super Admin) -->
                     @if(Auth::user()->role === 'super_admin')
                     <button @click="activeTab = 'security'"
                         :class="activeTab === 'security' ? 'bg-red-600 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'"
@@ -123,13 +147,14 @@
                 </div>
             </div>
 
-            <!-- CONTENU DYNAMIQUE (Un seul affiché à la fois) -->
+            <!-- 4. CONTENU DYNAMIQUE -->
             <div>
                 @if(Auth::user()->role === 'super_admin')
-                <div x-show="activeTab === 'analytics'" x-transition.opacity.duration.300ms>
-                    <livewire:admin.analytics-dashboard />
-                </div>
+                    <div x-show="activeTab === 'analytics'" x-transition.opacity.duration.300ms>
+                        <livewire:admin.analytics-dashboard />
+                    </div>
                 @endif
+
                 <div x-show="activeTab === 'bookings'" x-cloak x-transition.opacity.duration.300ms>
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg  border-t-4 border-green-500">
                         <livewire:admin.booking-manager />
@@ -159,12 +184,13 @@
                         <livewire:admin.client-manager />
                     </div>
                 </div>
+
                 @if(Auth::user()->role === 'super_admin')
-                <div x-show="activeTab === 'security'" x-cloak x-transition.opacity.duration.300ms>
+                    <div x-show="activeTab === 'security'" x-cloak x-transition.opacity.duration.300ms>
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <livewire:admin.security-dashboard />
+                        </div>
                     </div>
-                </div>
                 @endif
             </div>
 

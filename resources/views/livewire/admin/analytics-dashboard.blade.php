@@ -121,8 +121,6 @@
         </div>
     </div>
 
-    <!-- SCRIPT CHART.JS (LE COEUR DU SYSTÈME) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('livewire:initialized', () => {
 
