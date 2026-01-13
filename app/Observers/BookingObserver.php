@@ -54,14 +54,7 @@ class BookingObserver
                 "💰 Paiement encaissé : {$booking->total_price} FCFA"
             );
         }
-        // Si quelqu'un remet en "impayé", c'est louche -> On logue
-        else {
-            SecurityLogger::record(
-                'ALTERATION_PAIEMENT',
-                "Réservation #{$booking->id}",
-                "⚠️ Statut paiement modifié suspect : $oldPay -> $newPay"
-            );
-        }
+
     }
 }
 

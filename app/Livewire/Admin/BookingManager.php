@@ -49,14 +49,53 @@ class BookingManager extends Component
     }
 
     // Gestion du "Tout cocher"
+    // Gestion du "Tout cocher" de la page actuelle
     public function updatedSelectAll($value)
     {
         if ($value) {
-            // On prend les ID de la page courante (plus simple pour l'UX)
-            $this->selectedRows = $this->getCurrentPageIds();
+            // On récupère uniquement les IDs de la page visible (10 éléments)
+            // en respectant EXACTEMENT le même tri que l'affichage
+            $this->selectedRows = $this->getVisibleBookingIds();
         } else {
             $this->selectedRows = [];
         }
+    }
+
+    // Helper pour récupérer les IDs de la page courante avec le tri complexe
+    private function getVisibleBookingIds()
+    {
+        $query = Booking::with(['user', 'vehicle']);
+
+        // 1. On réapplique les filtres (Copie de la méthode render)
+        if ($this->search) {
+             $query->where(function($q) {
+                $q->whereHas('user', function($u) {
+                    $u->where('name', 'like', '%'.$this->search.'%')
+                      ->orWhere('email', 'like', '%'.$this->search.'%');
+                })
+                ->orWhereHas('vehicle', function($v) {
+                    $v->where('name', 'like', '%'.$this->search.'%')
+                      ->orWhere('brand', 'like', '%'.$this->search.'%');
+                })
+                ->orWhere('id', 'like', '%'.$this->search.'%');
+            });
+        }
+        if ($this->statusFilter) $query->where('status', $this->statusFilter);
+        if ($this->paymentFilter) $query->where('payment_status', $this->paymentFilter);
+        if ($this->dateStart) $query->whereDate('created_at', '>=', $this->dateStart);
+        if ($this->dateEnd) $query->whereDate('created_at', '<=', $this->dateEnd);
+
+        // 2. On réapplique le TRI INTELLIGENT
+        return $query
+            ->orderByRaw("CASE
+                WHEN status = 'en_attente' THEN 3
+                WHEN payment_status = 'en_attente_validation' THEN 2
+                ELSE 1 END DESC")
+            ->orderBy('id', 'desc')
+            ->paginate(10) // On pagine comme dans la vue
+            ->pluck('id')  // On prend juste les ID
+            ->map(fn($id) => (string) $id) // On convertit en string pour la checkbox
+            ->toArray();
     }
 
     // EXPORT INTELLIGENT
@@ -176,7 +215,7 @@ class BookingManager extends Component
         }
     }
     // Helper pour récupérer les IDs de la page (pour le Select All)
-    private function getCurrentPageIds()
+   private function getCurrentPageIds()
     {
         // On réexécute la requête pour avoir les IDs (simplifié)
         // Note: Dans un vrai gros projet on optimiserait, mais ici c'est ok.

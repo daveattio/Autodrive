@@ -19,7 +19,7 @@
         <flux:navlist variant="outline">
             <flux:navlist.group :heading="__('Platform')" class="grid">
                 <!-- Ce lien mène au Dashboard Admin -->
-                <flux:navlist.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')" wire:navigate>
+                <flux:navlist.item icon="home" :href="route('admin.dashboard')" :current="request()->routeIs('admin.dashboard')">
                     {{ __('Tableau de bord') }}
                 </flux:navlist.item>
             </flux:navlist.group>

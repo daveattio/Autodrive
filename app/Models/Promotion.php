@@ -16,6 +16,11 @@ class Promotion extends Model
         'is_active',
         'vehicle_id',
     ];
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
     public function vehicle()
 {
     return $this->belongsTo(Vehicle::class);

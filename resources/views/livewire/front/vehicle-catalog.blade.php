@@ -1,5 +1,10 @@
 <div class="container mx-auto px-4 py-8 max-w-7xl">
 
+    <!-- CHARGEMENT FLATPICKR (Si pas déjà dans le layout) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <!-- 1. BARRE DE FILTRES PRINCIPALE (Horizontale & Moderne) -->
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 mb-8 sticky top-20 z-30 transition-all duration-300">
         <div class="flex flex-col lg:flex-row gap-4 items-center">
@@ -16,43 +21,47 @@
             </div>
 
             <!-- Sélecteur de Dates (Flatpickr avec wire:ignore) -->
+            <!-- Sélecteur de Dates (ROBUSTE) -->
             <div class="w-full lg:w-1/3 flex gap-2" wire:ignore>
-                <div class="relative w-1/2">
-                    <input id="dateStartPicker" type="text" placeholder="Départ"
-                        class="w-full pl-10 pr-3 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 font-medium cursor-pointer"
-                        x-data
-                        x-init="
-                               flatpickr($el, {
-                                   dateFormat: 'Y-m-d',
-                                   altInput: true, altFormat: 'j F Y',
-                                   minDate: 'today',
-                                   theme: 'dark',
-                                   onChange: function(selectedDates, dateStr) { @this.set('dateStart', dateStr); }
-                               });
-                           ">
+
+                <!-- DÉPART -->
+                <div class="relative w-1/2"
+                    x-data
+                    x-init="
+             flatpickr($refs.start, {
+                 dateFormat: 'Y-m-d',
+                 altInput: true, altFormat: 'j F Y',
+                 minDate: 'today',
+                 theme: 'dark',
+                 onChange: function(selectedDates, dateStr) { @this.set('dateStart', dateStr); }
+             });
+         ">
+                    <input x-ref="start" type="text" placeholder="Départ"
+                        class="w-full pl-10 pr-3 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 font-medium cursor-pointer">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg></div>
                 </div>
-                <div class="relative w-1/2">
-                    <input id="dateEndPicker" type="text" placeholder="Retour"
-                        class="w-full pl-10 pr-3 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 font-medium cursor-pointer"
-                        x-data
-                        x-init="
-                               flatpickr($el, {
-                                   dateFormat: 'Y-m-d',
-                                   altInput: true, altFormat: 'j F Y',
-                                   minDate: 'today',
-                                   theme: 'dark',
-                                   onChange: function(selectedDates, dateStr) { @this.set('dateEnd', dateStr); }
-                               });
-                           ">
+
+                <!-- RETOUR -->
+                <div class="relative w-1/2"
+                    x-data
+                    x-init="
+             flatpickr($refs.end, {
+                 dateFormat: 'Y-m-d',
+                 altInput: true, altFormat: 'j F Y',
+                 minDate: 'today',
+                 theme: 'dark',
+                 onChange: function(selectedDates, dateStr) { @this.set('dateEnd', dateStr); }
+             });
+         ">
+                    <input x-ref="end" type="text" placeholder="Retour"
+                        class="w-full pl-10 pr-3 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 font-medium cursor-pointer">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg></div>
                 </div>
             </div>
-
             <!-- Boutons Actions -->
             <div class="w-full lg:w-1/3 flex gap-3">
                 <button wire:click="toggleAdvancedFilters"

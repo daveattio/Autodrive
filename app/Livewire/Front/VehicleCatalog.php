@@ -7,13 +7,16 @@ use App\Models\Vehicle;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Url; // N'oublie pas l'import
 
 class VehicleCatalog extends Component
 {
     use WithPagination;
 
     // Filtres
+    #[Url]
     public $search = '';
+    #[Url]
     public $type = '';
     public $transmission = '';
     public $maxPrice = 300000;

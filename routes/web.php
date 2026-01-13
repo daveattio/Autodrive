@@ -7,6 +7,7 @@ use App\Livewire\Front\UserBookings;
 use App\Http\Controllers\PdfController; // Important pour le contrat
 use App\Models\Promotion; // N'oublie pas cet import tout en haut pour les promotions
 use App\Http\Middleware\IsAdmin;
+use App\Http\Controllers\ReportController;
 
 // ==========================================
 // 1. ZONE PUBLIQUE (Accessible à tous)
@@ -55,6 +56,8 @@ Route::middleware(['auth'])->group(function () {
 // 3. ZONE ADMIN (Rôle Admin requis)
 // ==========================================
 Route::middleware(['auth', IsAdmin::class])->group(function () {
+// Analytics & Rapport
+Route::get('/admin/report', [ReportController::class, 'generate'])->name('admin.report');
 
     // Dashboard Admin
     Route::view('/admin/dashboard', 'dashboard')->name('admin.dashboard');
