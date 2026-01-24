@@ -32,7 +32,7 @@ Route::get('/promotions', function () {
     // Changement ici : paginate(6) pour avoir des pages
     $promotions = Promotion::whereDate('end_date', '>=', now())
         ->latest()
-        ->paginate(6);
+        ->paginate(10);
     return view('front.promotions', compact('promotions'));
 })->name('promotions');
 

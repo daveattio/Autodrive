@@ -6,11 +6,13 @@ use Livewire\Component;
 use App\Models\Vehicle;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
+use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 
 class VehicleManager extends Component
 {
     use WithFileUploads;
+    use WithPagination;
 
     // Champs Formulaire
     public $brand, $name, $type, $transmission, $daily_price, $description, $image;
